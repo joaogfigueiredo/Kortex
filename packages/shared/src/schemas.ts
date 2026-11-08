@@ -333,9 +333,26 @@ export const dateQuery = z.object({ date: isoDate });
 
 export const dailyGoalCreate = z.object({
   title,
-  weekdays: weekdayMask.default(127),
+  /** Bitmask Dom=1..Sáb=64 (127 = todo dia). */
+  weekdays: weekdayMask.min(1, 'Escolha ao menos um dia').default(127),
   icon: z.string().max(40).nullish(),
 });
+
+export const dailyGoalUpdate = z
+  .object({
+    title,
+    weekdays: weekdayMask.min(1, 'Escolha ao menos um dia'),
+    icon: z.string().max(40).nullable(),
+    active: z.boolean(),
+    position: z.number(),
+  })
+  .partial();
+
+export const goalCheckParams = z.object({
+  id: z.coerce.number().int().positive(),
+  date: isoDate,
+});
+export const goalCheckBody = z.object({ done: z.boolean() });
 
 export type IdeaCreate = z.input<typeof ideaCreate>;
 export type IdeaUpdate = z.infer<typeof ideaUpdate>;
@@ -358,3 +375,4 @@ export type WorkoutUpdate = z.infer<typeof workoutUpdate>;
 export type MealPlanCreate = z.infer<typeof mealPlanCreate>;
 export type MealPlanUpdate = z.infer<typeof mealPlanUpdate>;
 export type DailyGoalCreate = z.infer<typeof dailyGoalCreate>;
+export type DailyGoalUpdate = z.infer<typeof dailyGoalUpdate>;

@@ -221,4 +221,29 @@ export interface WellnessSummary {
   dietPct: number | null;
 }
 
+export interface DailyGoal {
+  id: number;
+  title: string;
+  weekdays: number;
+  icon: string | null;
+  position: number;
+  active: boolean;
+  createdAt: string;
+}
+
+/** Meta prevista para um dia, com status e sequência atual. */
+export interface GoalOfDay extends DailyGoal {
+  done: boolean;
+  /** Dias previstos seguidos cumpridos (até hoje, ou até o último previsto se hoje ainda não foi). */
+  streak: number;
+}
+
+export interface GoalsSummary {
+  last7: { date: string; planned: number; done: number }[];
+  /** % das metas previstas cumpridas nos 7 dias (null se nada previsto). */
+  weekPct: number | null;
+  /** Dias seguidos com TODAS as metas previstas cumpridas. */
+  perfectStreak: number;
+}
+
 export const PRIORITY_LABEL: Record<number, string> = { 1: 'Alta', 2: 'Média', 3: 'Baixa' };
