@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import {
-  FINANCE_ENTRY_TYPE,
   FINANCE_KIND,
   FINANCE_STATUS,
   IDEA_STATUS,
@@ -96,22 +95,56 @@ export const projectMove = z
   })
   .refine(devLevelOk, devLevelRule);
 
+const cents = z.number().int().nonnegative().max(1e12);
+
 export const financeActivityCreate = z.object({
   title,
   description: optionalText,
   status: z.enum(FINANCE_STATUS).default('idea'),
   kind: z.enum(FINANCE_KIND).default('business'),
-  expectedMonthlyCents: z.number().int().nonnegative().nullish(),
-  actualMonthlyCents: z.number().int().nonnegative().nullish(),
+  expectedMonthlyCents: cents.nullish(),
+  actualMonthlyCents: cents.nullish(),
   currency: z.string().length(3).default('BRL'),
   projectId: z.number().int().positive().nullish(),
 });
 
-export const financeEntryCreate = z.object({
-  type: z.enum(FINANCE_ENTRY_TYPE),
-  content: z.string().trim().min(1),
-  dueAt: isoDateTime.nullish(),
+/** PATCH parcial (sem defaults). */
+export const financeActivityUpdate = z
+  .object({
+    title,
+    description: optionalText,
+    status: z.enum(FINANCE_STATUS),
+    kind: z.enum(FINANCE_KIND),
+    expectedMonthlyCents: cents.nullable(),
+    actualMonthlyCents: cents.nullable(),
+    projectId: z.number().int().positive().nullable(),
+  })
+  .partial();
+
+export const financeMove = z.object({
+  status: z.enum(FINANCE_STATUS),
+  index: z.number().int().min(0),
 });
+
+/** Entradas criadas pelo usuário: observação ou aviso (edições/status são automáticos). */
+export const financeEntryCreate = z
+  .object({
+    type: z.enum(['note', 'alert']),
+    content: z.string().trim().min(1, 'Escreva algo').max(5000),
+    dueAt: isoDateTime.nullish(),
+  })
+  .refine((e) => e.type === 'alert' || !e.dueAt, {
+    message: 'Só avisos têm data',
+    path: ['dueAt'],
+  });
+
+export const financeEntryUpdate = z
+  .object({
+    content: z.string().trim().min(1).max(5000),
+    dueAt: isoDateTime.nullable(),
+    resolved: z.boolean(),
+  })
+  .partial();
 
 export const reminderCategoryCreate = z.object({ name: title, color: hexColor });
 
@@ -186,6 +219,10 @@ export type ProjectCreate = z.infer<typeof projectCreate>;
 export type ProjectUpdate = z.infer<typeof projectUpdate>;
 export type ProjectMove = z.infer<typeof projectMove>;
 export type FinanceActivityCreate = z.infer<typeof financeActivityCreate>;
+export type FinanceActivityUpdate = z.infer<typeof financeActivityUpdate>;
+export type FinanceMove = z.infer<typeof financeMove>;
+export type FinanceEntryCreate = z.infer<typeof financeEntryCreate>;
+export type FinanceEntryUpdate = z.infer<typeof financeEntryUpdate>;
 export type ReminderCreate = z.infer<typeof reminderCreate>;
 export type StudySubjectCreate = z.infer<typeof studySubjectCreate>;
 export type TimeEntryCreate = z.infer<typeof timeEntryCreate>;
