@@ -1,6 +1,6 @@
 import { lazy } from 'react';
 import { BrowserRouter, Link, Route, Routes } from 'react-router';
-import { ChartColumn, GraduationCap, HeartPulse } from 'lucide-react';
+import { ChartColumn, HeartPulse } from 'lucide-react';
 import { AppShell } from '../components/layout/AppShell';
 import { Card } from '../components/ui';
 import { HomePage } from '../features/home/HomePage';
@@ -18,6 +18,9 @@ const FinancePage = lazy(() =>
 );
 const AgendaPage = lazy(() =>
   import('../features/reminders/AgendaPage').then((m) => ({ default: m.AgendaPage })),
+);
+const StudiesPage = lazy(() =>
+  import('../features/studies/StudiesPage').then((m) => ({ default: m.StudiesPage })),
 );
 const SettingsPage = lazy(() =>
   import('../features/settings/SettingsPage').then((m) => ({ default: m.SettingsPage })),
@@ -48,22 +51,7 @@ export function App() {
           <Route path="projetos" element={<ProjectsPage />} />
           <Route path="financas" element={<FinancePage />} />
           <Route path="lembretes" element={<AgendaPage />} />
-          <Route
-            path="estudos"
-            element={
-              <ComingSoon
-                title="Estudos"
-                subtitle="Acompanhe cada matéria"
-                icon={GraduationCap}
-                step={7}
-                features={[
-                  'Progresso visual e nível (Iniciante → Intermediário → Avançado)',
-                  'Data da última sessão',
-                  'Sessões cronometradas pelo Modo Foco',
-                ]}
-              />
-            }
-          />
+          <Route path="estudos" element={<StudiesPage />} />
           <Route
             path="saude"
             element={

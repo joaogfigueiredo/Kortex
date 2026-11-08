@@ -53,8 +53,8 @@ Todo passo termina com o app rodando, uma checagem manual no navegador (desktop 
 
 ## Passo 7: Estudos
 
-- [ ] Matérias com progresso visual, nível (Iniciante → Intermediário → Avançado) e última sessão
-- [ ] Registro de sessões de estudo (`time_entries`)
+- [x] Matérias com progresso visual, nível (Iniciante → Intermediário → Avançado) e última sessão
+- [x] Registro de sessões de estudo (`time_entries`)
 
 ## Passo 8: Saúde (treinos e dieta)
 

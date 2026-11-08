@@ -34,6 +34,9 @@
   --k-pink: #ff8fc7;
   --k-red: #ff6b6b;
   --k-danger: #c62828; /* vermelho legível como texto no claro */
+
+  /* Série única de gráficos (validada: contraste >= 3:1 e banda de luminosidade) */
+  --k-chart-1: #07729a;
 }
 
 [data-theme='dark'] {
@@ -55,6 +58,7 @@
   --k-accent-soft: rgb(111 227 255 / 0.12);
   --k-glow: 0 0 0 1px rgb(111 227 255 / 0.5), 0 0 22px rgb(111 227 255 / 0.4);
   --k-danger: #ff6b6b;
+  --k-chart-1: #1fa3d1;
 }
 
 @theme inline {
@@ -76,6 +80,7 @@
   --color-pink: var(--k-pink);
   --color-red: var(--k-red);
   --color-danger: var(--k-danger);
+  --color-chart-1: var(--k-chart-1);
 
   /* Sombras neomórficas: elevado / pressionado */
   --shadow-neu: 7px 7px 16px var(--k-sh-dark), -7px -7px 16px var(--k-sh-light);
@@ -145,6 +150,40 @@
 .kanban-scroll:hover::-webkit-scrollbar-thumb {
   background: var(--k-accent);
   box-shadow: 0 0 8px var(--k-accent);
+}
+
+/* Slider neumórfico: trilho afundado com preenchimento neon e botão elevado. */
+.kortex-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 12px;
+  border-radius: 9999px;
+  background:
+    linear-gradient(var(--range-color, var(--k-accent)), var(--range-color, var(--k-accent))) 0 /
+      var(--range-pct, 0%) 100% no-repeat,
+    var(--k-bg);
+  box-shadow: var(--shadow-neu-inset-sm);
+  cursor: pointer;
+}
+.kortex-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: var(--k-surface);
+  box-shadow:
+    var(--shadow-neu-sm),
+    0 0 0 2px var(--range-color, var(--k-accent));
+}
+.kortex-range::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 9999px;
+  background: var(--k-surface);
+  box-shadow:
+    var(--shadow-neu-sm),
+    0 0 0 2px var(--range-color, var(--k-accent));
 }
 
 @utility pb-safe {

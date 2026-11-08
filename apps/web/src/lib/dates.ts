@@ -55,3 +55,7 @@ export function relativeDayLabel(s: string, today = todayStr()): string {
 /** "quinta-feira, 12 de novembro" */
 export const longDayLabel = (s: string) =>
   parseDateStr(s).toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+
+/** Dias entre duas datas "YYYY-MM-DD" (b - a). */
+export const daysBetweenStr = (a: string, b: string) =>
+  Math.round((parseDateStr(b).getTime() - parseDateStr(a).getTime()) / 86_400_000);
