@@ -81,25 +81,29 @@ export function WeekBars({
       </div>
 
       {/* Visão em tabela para leitores de tela */}
-      <table className="sr-only">
-        <caption>{title}</caption>
-        <thead>
-          <tr>
-            <th scope="col">Dia</th>
-            <th scope="col">Tempo</th>
-          </tr>
-        </thead>
-        <tbody>
-          {days.map((d) => (
-            <tr key={d.date}>
-              <td>
-                {WEEKDAY_NAME[parseDateStr(d.date).getDay()]} {d.date.slice(8)}/{d.date.slice(5, 7)}
-              </td>
-              <td>{format(d.value)}</td>
+      {/* sr-only num <div>: tabela ignora width:1px e alargaria a página */}
+      <div className="sr-only">
+        <table>
+          <caption>{title}</caption>
+          <thead>
+            <tr>
+              <th scope="col">Dia</th>
+              <th scope="col">Tempo</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {days.map((d) => (
+              <tr key={d.date}>
+                <td>
+                  {WEEKDAY_NAME[parseDateStr(d.date).getDay()]} {d.date.slice(8)}/
+                  {d.date.slice(5, 7)}
+                </td>
+                <td>{format(d.value)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </figure>
   );
 }

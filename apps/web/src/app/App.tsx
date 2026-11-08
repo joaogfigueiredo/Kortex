@@ -1,10 +1,8 @@
 import { lazy } from 'react';
 import { BrowserRouter, Link, Route, Routes } from 'react-router';
-import { ChartColumn } from 'lucide-react';
 import { AppShell } from '../components/layout/AppShell';
 import { Card } from '../components/ui';
 import { HomePage } from '../features/home/HomePage';
-import { ComingSoon } from '../features/placeholder/ComingSoon';
 
 // Módulos carregados sob demanda: o app abre rápido no celular.
 const IdeasPage = lazy(() =>
@@ -24,6 +22,9 @@ const StudiesPage = lazy(() =>
 );
 const HealthPage = lazy(() =>
   import('../features/health/HealthPage').then((m) => ({ default: m.HealthPage })),
+);
+const DashboardPage = lazy(() =>
+  import('../features/dashboard/DashboardPage').then((m) => ({ default: m.DashboardPage })),
 );
 const SettingsPage = lazy(() =>
   import('../features/settings/SettingsPage').then((m) => ({ default: m.SettingsPage })),
@@ -56,22 +57,7 @@ export function App() {
           <Route path="lembretes" element={<AgendaPage />} />
           <Route path="estudos" element={<StudiesPage />} />
           <Route path="saude" element={<HealthPage />} />
-          <Route
-            path="dashboard"
-            element={
-              <ComingSoon
-                title="Dashboard"
-                subtitle="Sua produtividade em números"
-                icon={ChartColumn}
-                step={11}
-                features={[
-                  'Tempo estudado e investido em ideias/projetos',
-                  'Continuidade (streaks) e frequência de trabalho',
-                  'Treinos e cumprimento da dieta: dia, semana e mês',
-                ]}
-              />
-            }
-          />
+          <Route path="dashboard" element={<DashboardPage />} />
           <Route path="configuracoes" element={<SettingsPage />} />
           <Route path="*" element={<NotFound />} />
         </Route>

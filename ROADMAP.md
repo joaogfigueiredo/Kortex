@@ -74,8 +74,8 @@ Todo passo termina com o app rodando, uma checagem manual no navegador (desktop 
 
 ## Passo 11: Dashboard de produtividade
 
-- [ ] Endpoints de agregação (dia, semana, mês)
-- [ ] Gráficos: tempo estudado, tempo em ideias e projetos, continuidade (streaks), frequência de trabalho, treinos, cumprimento da dieta, metas
+- [x] Endpoints de agregação (dia, semana, mês)
+- [x] Gráficos: tempo estudado, tempo em ideias e projetos, continuidade (streaks), frequência de trabalho, treinos, cumprimento da dieta, metas
 
 ## Passo 12: Backup e exportação
 

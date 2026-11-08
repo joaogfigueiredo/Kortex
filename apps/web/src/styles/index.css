@@ -37,6 +37,14 @@
 
   /* Série única de gráficos (validada: contraste >= 3:1 e banda de luminosidade) */
   --k-chart-1: #07729a;
+  /* Paleta categórica do Dashboard — ordem validada (CVD/visão normal) para barras empilhadas.
+     Estudo · Trabalho · Projetos · Ideias · Finanças · Outro (neutro) */
+  --k-s-study: #07729a;
+  --k-s-work: #eb6834;
+  --k-s-project: #1baf7a;
+  --k-s-idea: #6250d6;
+  --k-s-finance: #e87ba4;
+  --k-s-other: #7d8696;
 }
 
 [data-theme='dark'] {
@@ -59,6 +67,12 @@
   --k-glow: 0 0 0 1px rgb(111 227 255 / 0.5), 0 0 22px rgb(111 227 255 / 0.4);
   --k-danger: #ff6b6b;
   --k-chart-1: #1fa3d1;
+  --k-s-study: #1fa3d1;
+  --k-s-work: #d95926;
+  --k-s-project: #199e70;
+  --k-s-idea: #9085e9;
+  --k-s-finance: #d55181;
+  --k-s-other: #7d8696;
 }
 
 @theme inline {
