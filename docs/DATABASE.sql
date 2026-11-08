@@ -144,7 +144,7 @@ CREATE TABLE time_entries (
   id           INTEGER PRIMARY KEY,
   module       TEXT NOT NULL CHECK (module IN ('study','idea','project','finance','work','other')),
   ref_id       INTEGER,                        -- id da entidade (subject, idea, project...)
-  started_at   TEXT NOT NULL,
+  started_at   TEXT NOT NULL,                -- LOCAL "flutuante": YYYY-MM-DDTHH:mm[:ss]
   ended_at     TEXT,
   duration_sec INTEGER NOT NULL DEFAULT 0,
   source       TEXT NOT NULL DEFAULT 'manual' CHECK (source IN ('manual','focus')),

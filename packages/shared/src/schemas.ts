@@ -226,18 +226,51 @@ export const studySubjectCreate = z.object({
   color: hexColor.default('#6FE3FF'),
   level: z.enum(STUDY_LEVEL).default('beginner'),
   progress: z.number().int().min(0).max(100).default(0),
-  targetHours: z.number().positive().nullish(),
+  targetHours: z.number().positive().max(100_000).nullish(),
 });
+
+/** PATCH parcial (sem defaults). */
+export const studySubjectUpdate = z
+  .object({
+    name: title,
+    description: optionalText,
+    color: hexColor,
+    level: z.enum(STUDY_LEVEL),
+    progress: z.number().int().min(0).max(100),
+    targetHours: z.number().positive().max(100_000).nullable(),
+    archived: z.boolean(),
+  })
+  .partial();
+
+/**
+ * Instante local "flutuante" com segundos opcionais: "2026-11-08T21:30" ou "…:30:15".
+ * Agrupar por dia = os 10 primeiros caracteres, sem conversão de fuso.
+ */
+const localTimestamp = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?$/, 'Data/hora inválida (YYYY-MM-DDTHH:mm[:ss])');
 
 export const timeEntryCreate = z.object({
   module: z.enum(TIME_MODULE),
   refId: z.number().int().positive().nullish(),
-  startedAt: isoDateTime,
-  endedAt: isoDateTime.nullish(),
-  durationSec: z.number().int().nonnegative(),
+  startedAt: localTimestamp,
+  endedAt: localTimestamp.nullish(),
+  /** 1 s a 24 h */
+  durationSec: z.number().int().min(1).max(86_400),
   source: z.enum(TIME_SOURCE).default('manual'),
   note: optionalText,
 });
+
+export const timeEntryQuery = z.object({
+  module: z.enum(TIME_MODULE).optional(),
+  refId: z.coerce.number().int().positive().optional(),
+  from: isoDate.optional(),
+  to: isoDate.optional(),
+  limit: z.coerce.number().int().min(1).max(500).default(100),
+});
+
+/** Resumo de estudos: o cliente informa o "hoje" local para semana/sequência. */
+export const studySummaryQuery = z.object({ today: isoDate });
 
 export const workoutCreate = z.object({
   date: isoDate,
@@ -284,5 +317,6 @@ export type FinanceEntryUpdate = z.infer<typeof financeEntryUpdate>;
 export type ReminderCreate = z.infer<typeof reminderCreate>;
 export type ReminderUpdate = z.infer<typeof reminderUpdate>;
 export type StudySubjectCreate = z.infer<typeof studySubjectCreate>;
+export type StudySubjectUpdate = z.infer<typeof studySubjectUpdate>;
 export type TimeEntryCreate = z.infer<typeof timeEntryCreate>;
 export type DailyGoalCreate = z.infer<typeof dailyGoalCreate>;

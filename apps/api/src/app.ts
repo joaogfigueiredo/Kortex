@@ -8,6 +8,8 @@ import { ideasRoutes } from './modules/ideas/routes';
 import { projectsRoutes } from './modules/projects/routes';
 import { financeRoutes } from './modules/finance/routes';
 import { remindersRoutes } from './modules/reminders/routes';
+import { timeRoutes } from './modules/time/routes';
+import { studiesRoutes } from './modules/studies/routes';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -44,7 +46,9 @@ export async function buildApp({ db, logger = true }: AppOptions) {
   await app.register(projectsRoutes, { prefix: '/api/projects' });
   await app.register(financeRoutes, { prefix: '/api/finance' });
   await app.register(remindersRoutes, { prefix: '/api/reminders' });
-  // Próximos módulos (Passos 7+): studies, health, goals...
+  await app.register(timeRoutes, { prefix: '/api/time' });
+  await app.register(studiesRoutes, { prefix: '/api/studies' });
+  // Próximos módulos (Passos 8+): health, goals...
 
   return app;
 }

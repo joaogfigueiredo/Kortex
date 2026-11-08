@@ -6,6 +6,9 @@ import type {
   ProjectStatus,
   Recurrence,
   ReminderKind,
+  StudyLevel,
+  TimeModule,
+  TimeSource,
 } from './enums';
 
 /** Formatos retornados pela API (JSON). Datas em ISO-8601. */
@@ -117,6 +120,46 @@ export interface Occurrence {
   recurrence: Recurrence;
   allDay: boolean;
   done: boolean;
+}
+
+export interface TimeEntry {
+  id: number;
+  module: TimeModule;
+  refId: number | null;
+  /** Local/flutuante: "YYYY-MM-DDTHH:mm[:ss]" */
+  startedAt: string;
+  endedAt: string | null;
+  durationSec: number;
+  source: TimeSource;
+  note: string | null;
+  createdAt: string;
+}
+
+export interface StudySubject {
+  id: number;
+  name: string;
+  description: string | null;
+  color: string;
+  level: StudyLevel;
+  progress: number;
+  targetHours: number | null;
+  archived: boolean;
+  createdAt: string;
+  updatedAt: string;
+  /** Estatísticas calculadas a partir das sessões (time_entries). */
+  totalSec: number;
+  weekSec: number;
+  sessions: number;
+  lastStudiedAt: string | null;
+}
+
+export interface StudySummary {
+  /** Segundos estudados nos últimos 7 dias (incluindo hoje). */
+  weekSec: number;
+  /** Dias seguidos com estudo, terminando hoje ou ontem. */
+  streak: number;
+  /** Segundos por dia dos últimos 7 dias, do mais antigo para hoje. */
+  last7: { date: string; sec: number }[];
 }
 
 export const PRIORITY_LABEL: Record<number, string> = { 1: 'Alta', 2: 'Média', 3: 'Baixa' };
