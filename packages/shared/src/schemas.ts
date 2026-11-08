@@ -269,33 +269,67 @@ export const timeEntryQuery = z.object({
   limit: z.coerce.number().int().min(1).max(500).default(100),
 });
 
-/** Resumo de estudos: o cliente informa o "hoje" local para semana/sequência. */
-export const studySummaryQuery = z.object({ today: isoDate });
+/** O cliente informa o "hoje" local (semana, sequência…) — sem depender do fuso do servidor. */
+export const todayQuery = z.object({ today: isoDate });
+
+const workoutType = z.string().trim().min(1, 'Obrigatório').max(60);
+const hhmm = z.string().regex(/^\d{2}:\d{2}$/, 'Horário inválido (HH:mm)');
 
 export const workoutCreate = z.object({
   date: isoDate,
-  type: title,
-  durationMin: z.number().int().positive().nullish(),
+  type: workoutType,
+  durationMin: z.number().int().positive().max(1440).nullish(),
   intensity: z.number().int().min(1).max(5).nullish(),
   notes: optionalText,
 });
 
-export const mealPlanCreate = z.object({
-  name: title,
-  time: z
-    .string()
-    .regex(/^\d{2}:\d{2}$/)
-    .nullish(),
-  description: optionalText,
-  weekdays: weekdayMask.default(127),
+export const workoutUpdate = z
+  .object({
+    date: isoDate,
+    type: workoutType,
+    durationMin: z.number().int().positive().max(1440).nullable(),
+    intensity: z.number().int().min(1).max(5).nullable(),
+    notes: optionalText,
+  })
+  .partial();
+
+export const workoutQuery = z.object({
+  from: isoDate.optional(),
+  to: isoDate.optional(),
+  limit: z.coerce.number().int().min(1).max(500).default(100),
 });
 
-export const mealLogUpsert = z.object({
-  mealId: z.number().int().positive(),
-  date: isoDate,
+export const mealPlanCreate = z.object({
+  name: title,
+  time: hhmm.nullish(),
+  description: optionalText,
+  /** Dias da semana em que a refeição vale (bitmask; 127 = todos). */
+  weekdays: weekdayMask.min(1, 'Escolha ao menos um dia').default(127),
+});
+
+export const mealPlanUpdate = z
+  .object({
+    name: title,
+    time: hhmm.nullable(),
+    description: optionalText,
+    weekdays: weekdayMask.min(1, 'Escolha ao menos um dia'),
+    active: z.boolean(),
+    position: z.number(),
+  })
+  .partial();
+
+/** Marcação da refeição num dia. */
+export const mealLogBody = z.object({
   status: z.enum(MEAL_STATUS),
   note: optionalText,
 });
+
+export const mealLogParams = z.object({
+  id: z.coerce.number().int().positive(),
+  date: isoDate,
+});
+
+export const dateQuery = z.object({ date: isoDate });
 
 export const dailyGoalCreate = z.object({
   title,
@@ -319,4 +353,8 @@ export type ReminderUpdate = z.infer<typeof reminderUpdate>;
 export type StudySubjectCreate = z.infer<typeof studySubjectCreate>;
 export type StudySubjectUpdate = z.infer<typeof studySubjectUpdate>;
 export type TimeEntryCreate = z.infer<typeof timeEntryCreate>;
+export type WorkoutCreate = z.infer<typeof workoutCreate>;
+export type WorkoutUpdate = z.infer<typeof workoutUpdate>;
+export type MealPlanCreate = z.infer<typeof mealPlanCreate>;
+export type MealPlanUpdate = z.infer<typeof mealPlanUpdate>;
 export type DailyGoalCreate = z.infer<typeof dailyGoalCreate>;

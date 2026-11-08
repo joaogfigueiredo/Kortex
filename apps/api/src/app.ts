@@ -10,6 +10,7 @@ import { financeRoutes } from './modules/finance/routes';
 import { remindersRoutes } from './modules/reminders/routes';
 import { timeRoutes } from './modules/time/routes';
 import { studiesRoutes } from './modules/studies/routes';
+import { mealsRoutes, wellnessRoutes, workoutsRoutes } from './modules/health/routes';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -48,7 +49,10 @@ export async function buildApp({ db, logger = true }: AppOptions) {
   await app.register(remindersRoutes, { prefix: '/api/reminders' });
   await app.register(timeRoutes, { prefix: '/api/time' });
   await app.register(studiesRoutes, { prefix: '/api/studies' });
-  // Próximos módulos (Passos 8+): health, goals...
+  await app.register(workoutsRoutes, { prefix: '/api/workouts' });
+  await app.register(mealsRoutes, { prefix: '/api/meals' });
+  await app.register(wellnessRoutes, { prefix: '/api/wellness' });
+  // Próximos módulos (Passos 9+): goals, dashboard...
 
   return app;
 }

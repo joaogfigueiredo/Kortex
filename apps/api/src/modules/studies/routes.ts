@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { idParam, studySubjectCreate, studySubjectUpdate, studySummaryQuery } from '@kortex/shared';
+import { idParam, studySubjectCreate, studySubjectUpdate, todayQuery } from '@kortex/shared';
 import * as svc from './service';
 
 /**
@@ -7,7 +7,7 @@ import * as svc from './service';
  * calcular a janela da semana e a sequência sem depender do fuso do servidor.
  */
 export const studiesRoutes: FastifyPluginAsync = async (app) => {
-  const today = (q: unknown) => studySummaryQuery.parse(q).today;
+  const today = (q: unknown) => todayQuery.parse(q).today;
 
   app.get('/summary', async (req) => svc.studySummary(app.db, today(req.query)));
 

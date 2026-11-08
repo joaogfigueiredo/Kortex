@@ -3,6 +3,7 @@ import type {
   FinanceKind,
   FinanceStatus,
   IdeaStatus,
+  MealStatus,
   ProjectStatus,
   Recurrence,
   ReminderKind,
@@ -160,6 +161,62 @@ export interface StudySummary {
   streak: number;
   /** Segundos por dia dos últimos 7 dias, do mais antigo para hoje. */
   last7: { date: string; sec: number }[];
+}
+
+export interface Workout {
+  id: number;
+  date: string;
+  type: string;
+  durationMin: number | null;
+  intensity: number | null;
+  notes: string | null;
+  createdAt: string;
+}
+
+export interface Meal {
+  id: number;
+  name: string;
+  time: string | null;
+  description: string | null;
+  weekdays: number;
+  position: number;
+  active: boolean;
+}
+
+export interface MealLog {
+  mealId: number;
+  date: string;
+  status: MealStatus;
+  note: string | null;
+}
+
+/** Visão de um dia: refeições previstas (com marcação) + treinos. */
+export interface WellnessDay {
+  date: string;
+  meals: (Meal & { log: MealLog | null })[];
+  workouts: Workout[];
+}
+
+export interface WellnessDayStats {
+  date: string;
+  workoutMin: number;
+  workouts: number;
+  mealsPlanned: number;
+  mealsDone: number;
+  mealsPartial: number;
+  /** 0–100, feita = 1 e parcial = 0,5; null quando não há refeição prevista. */
+  dietPct: number | null;
+}
+
+export interface WellnessSummary {
+  last7: WellnessDayStats[];
+  weekWorkouts: number;
+  weekWorkoutMin: number;
+  activeDays: number;
+  /** Dias (dos 7) com alguma refeição marcada. */
+  loggedDays: number;
+  /** Aderência média nos dias registrados (0–100); null se nenhum dia registrado. */
+  dietPct: number | null;
 }
 
 export const PRIORITY_LABEL: Record<number, string> = { 1: 'Alta', 2: 'Média', 3: 'Baixa' };
