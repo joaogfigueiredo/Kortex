@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
-import { Lightbulb, Plus, Search } from 'lucide-react';
+import { Lightbulb, Plus } from 'lucide-react';
 import { IDEA_STATUS, IDEA_STATUS_LABEL, type Idea, type IdeaStatus } from '@kortex/shared';
 import { Board, type BoardColumn } from '../../components/kanban/Board';
 import { PageHeader } from '../../components/layout/PageHeader';
-import { Button, Card, Input } from '../../components/ui';
+import { Button, Card, SearchField } from '../../components/ui';
+import { matchesQuery, normalize, toFullIndex } from '../../lib/kanban';
 import { useIdeaMutations, useIdeas } from './api';
 import { IdeaCard } from './IdeaCard';
 import { IdeaModal, type IdeaModalState } from './IdeaModal';
@@ -15,12 +16,6 @@ export const IDEA_COLUMN_COLOR: Record<IdeaStatus, string> = {
   done: '#4DF5B8',
 };
 
-const normalize = (s: string) =>
-  s
-    .normalize('NFD')
-    .replace(/\p{Diacritic}/gu, '')
-    .toLowerCase();
-
 export function IdeasPage() {
   const { data: ideas = [], isLoading, isError } = useIdeas();
   const { move } = useIdeaMutations();
@@ -30,8 +25,7 @@ export function IdeasPage() {
   const q = normalize(query.trim());
 
   const columns: BoardColumn<Idea>[] = useMemo(() => {
-    const matches = (i: Idea) =>
-      !q || normalize(i.title).includes(q) || normalize(i.description ?? '').includes(q);
+    const matches = (i: Idea) => matchesQuery(q, i.title, i.description);
     return IDEA_STATUS.map((status) => ({
       id: status,
       title: IDEA_STATUS_LABEL[status],
@@ -47,10 +41,9 @@ export function IdeasPage() {
   function handleMove(id: number, status: string, visibleIndex: number) {
     const target = status as IdeaStatus;
     if (!q) return move(id, target, visibleIndex);
-    const visible = columns.find((c) => c.id === target)!.items.filter((i) => i.id !== id);
-    const full = ideas.filter((i) => i.status === target && i.id !== id);
-    const next = visible[visibleIndex];
-    move(id, target, next ? full.findIndex((i) => i.id === next.id) : full.length);
+    const visible = columns.find((c) => c.id === target)!.items;
+    const full = ideas.filter((i) => i.status === target);
+    move(id, target, toFullIndex(visible, full, id, visibleIndex));
   }
 
   const total = ideas.length;
@@ -77,17 +70,13 @@ export function IdeasPage() {
       />
 
       {total > 0 && (
-        <div className="relative mb-6 max-w-sm">
-          <Search className="pointer-events-none absolute top-1/2 left-4 z-10 size-4 -translate-y-1/2 text-muted" />
-          <Input
-            aria-label="Buscar ideias"
-            placeholder="Buscar ideias…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="pl-11"
-            type="search"
-          />
-        </div>
+        <SearchField
+          label="Buscar ideias"
+          placeholder="Buscar ideias…"
+          value={query}
+          onChange={setQuery}
+          className="mb-6"
+        />
       )}
 
       {isError && (

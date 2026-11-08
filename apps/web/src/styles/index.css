@@ -127,6 +127,26 @@
   }
 }
 
+/* Barra de rolagem fina dos Kanbans (indica que há mais colunas). */
+.kanban-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--k-line) transparent;
+}
+.kanban-scroll:hover {
+  scrollbar-color: var(--k-accent) transparent;
+}
+.kanban-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+.kanban-scroll::-webkit-scrollbar-thumb {
+  background: var(--k-line);
+  border-radius: 9999px;
+}
+.kanban-scroll:hover::-webkit-scrollbar-thumb {
+  background: var(--k-accent);
+  box-shadow: 0 0 8px var(--k-accent);
+}
+
 @utility pb-safe {
   padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
 }

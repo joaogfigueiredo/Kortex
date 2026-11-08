@@ -4,6 +4,7 @@ export * from './Card';
 export * from './Field';
 export * from './Modal';
 export * from './Progress';
+export * from './SearchField';
 export * from './Segmented';
 export * from './Toaster';
 export * from './Toggle';

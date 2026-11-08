@@ -23,7 +23,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import clsx from 'clsx';
-import { Plus } from 'lucide-react';
+import { ChevronsLeftRight, ChevronsRightLeft, Plus } from 'lucide-react';
 import { Dot } from '../ui';
 
 export interface BoardColumn<T> {
@@ -32,8 +32,15 @@ export interface BoardColumn<T> {
   /** Cor neon da coluna (ponto + realce ao arrastar). */
   color: string;
   items: T[];
-  /** Texto pequeno acima do título (ex.: "Desenvolvimento" para sub-níveis). */
+  /** Texto pequeno acima do título. */
   eyebrow?: string;
+  /** Colunas consecutivas com o mesmo `group` são agrupadas num painel. */
+  group?: string;
+}
+
+export interface BoardGroup {
+  title: string;
+  color: string;
 }
 
 export interface BoardProps<T extends { id: number }> {
@@ -46,6 +53,10 @@ export interface BoardProps<T extends { id: number }> {
   /** fit = colunas dividem a largura no desktop · scroll = rolagem horizontal sempre. */
   layout?: 'fit' | 'scroll';
   emptyLabel?: string;
+  /** Metadados dos grupos (título/cor), indexados pelo `group` das colunas. */
+  groups?: Record<string, BoardGroup>;
+  /** Identifica o board para lembrar grupos recolhidos (localStorage). */
+  boardId?: string;
 }
 
 type ItemsMap<T> = Record<string, T[]>;
@@ -65,7 +76,10 @@ export function Board<T extends { id: number }>({
   onAdd,
   layout = 'fit',
   emptyLabel = 'Arraste cards para cá',
+  groups = {},
+  boardId,
 }: BoardProps<T>) {
+  const [collapsed, setCollapsed] = useCollapsedGroups(boardId);
   const fromProps = useMemo(
     () => Object.fromEntries(columns.map((c) => [c.id, c.items])) as ItemsMap<T>,
     [columns],
@@ -179,31 +193,59 @@ export function Board<T extends { id: number }>({
     >
       <div
         className={clsx(
-          '-mx-4 flex gap-4 overflow-x-auto px-4 pt-1 pb-6 md:mx-0 md:px-1',
+          'kanban-scroll -mx-4 flex gap-4 overflow-x-auto px-4 pt-1 pb-6 md:mx-0 md:px-1',
           !dragging && 'snap-x snap-mandatory md:snap-none',
           layout === 'fit' && 'lg:overflow-visible',
         )}
       >
-        {columns.map((col) => (
-          <Column
-            key={col.id}
-            column={col}
-            items={items[col.id] ?? []}
-            layout={layout}
-            onAdd={onAdd}
-            emptyLabel={emptyLabel}
-          >
-            {(items[col.id] ?? []).map((item) => (
-              <SortableCard
-                key={item.id}
-                id={item.id}
-                onOpen={onOpen ? () => onOpen(item) : undefined}
-              >
-                {renderCard(item, { overlay: false })}
-              </SortableCard>
-            ))}
-          </Column>
-        ))}
+        {segments(columns).map((seg) => {
+          const renderColumn = (col: BoardColumn<T>) => (
+            <Column
+              key={col.id}
+              column={col}
+              items={items[col.id] ?? []}
+              layout={layout}
+              onAdd={onAdd}
+              emptyLabel={emptyLabel}
+            >
+              {(items[col.id] ?? []).map((item) => (
+                <SortableCard
+                  key={item.id}
+                  id={item.id}
+                  onOpen={onOpen ? () => onOpen(item) : undefined}
+                >
+                  {renderCard(item, { overlay: false })}
+                </SortableCard>
+              ))}
+            </Column>
+          );
+          if (!seg.group) return renderColumn(seg.columns[0]!);
+          const meta = groups[seg.group] ?? { title: seg.group, color: seg.columns[0]!.color };
+          const isCollapsed = collapsed.has(seg.group);
+          return (
+            <GroupPanel
+              key={seg.group}
+              meta={meta}
+              total={seg.columns.reduce((n, c) => n + (items[c.id]?.length ?? 0), 0)}
+              collapsed={isCollapsed}
+              onToggle={() => setCollapsed(seg.group!, !isCollapsed)}
+            >
+              {isCollapsed ? (
+                <CollapsedDrop
+                  dropColumnId={seg.columns[0]!.id}
+                  columns={seg.columns.map((c) => ({
+                    id: c.id,
+                    title: c.title,
+                    count: items[c.id]?.length ?? 0,
+                  }))}
+                  color={meta.color}
+                />
+              ) : (
+                seg.columns.map(renderColumn)
+              )}
+            </GroupPanel>
+          );
+        })}
       </div>
 
       <DragOverlay dropAnimation={{ duration: 180, easing: 'cubic-bezier(.2,.8,.2,1)' }}>
@@ -214,6 +256,130 @@ export function Board<T extends { id: number }>({
         )}
       </DragOverlay>
     </DndContext>
+  );
+}
+
+/** Agrupa colunas consecutivas com o mesmo `group`. */
+function segments<T>(columns: BoardColumn<T>[]) {
+  const out: { group?: string; columns: BoardColumn<T>[] }[] = [];
+  for (const col of columns) {
+    const last = out.at(-1);
+    if (col.group && last?.group === col.group) last.columns.push(col);
+    else out.push({ group: col.group, columns: [col] });
+  }
+  return out;
+}
+
+function useCollapsedGroups(boardId?: string) {
+  const key = boardId ? `kortex-board:${boardId}:collapsed` : null;
+  const [set, setSet] = useState<Set<string>>(() => {
+    if (!key) return new Set();
+    try {
+      return new Set(JSON.parse(localStorage.getItem(key) ?? '[]') as string[]);
+    } catch {
+      return new Set();
+    }
+  });
+  const toggle = (group: string, value: boolean) =>
+    setSet((prev) => {
+      const next = new Set(prev);
+      if (value) next.add(group);
+      else next.delete(group);
+      if (key) {
+        try {
+          localStorage.setItem(key, JSON.stringify([...next]));
+        } catch {
+          /* sem armazenamento: só em memória */
+        }
+      }
+      return next;
+    });
+  return [set, toggle] as const;
+}
+
+/** Painel elevado que envolve as colunas de um grupo (ex.: Desenvolvimento). */
+function GroupPanel({
+  meta,
+  total,
+  collapsed,
+  onToggle,
+  children,
+}: {
+  meta: BoardGroup;
+  total: number;
+  collapsed: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <section
+      aria-label={meta.title}
+      className="flex shrink-0 flex-col rounded-[2rem] bg-bg px-3 pt-2 pb-3 shadow-neu"
+      style={{ boxShadow: `var(--shadow-neu), inset 0 0 0 1px ${meta.color}22` }}
+    >
+      <header className="flex items-center gap-2.5 px-2 pt-1 pb-2">
+        <Dot color={meta.color} size={10} />
+        <h2
+          className="flex-1 text-xs font-bold tracking-wider uppercase"
+          style={{ color: 'var(--k-accent-ink)' }}
+        >
+          {meta.title}
+        </h2>
+        <span className="text-xs font-medium text-muted tabular-nums">{total}</span>
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-expanded={!collapsed}
+          aria-label={collapsed ? `Expandir ${meta.title}` : `Recolher ${meta.title}`}
+          title={collapsed ? 'Expandir' : 'Recolher'}
+          className="grid size-7 place-items-center rounded-lg text-muted transition-colors hover:text-accent-ink"
+        >
+          {collapsed ? (
+            <ChevronsLeftRight className="size-4" />
+          ) : (
+            <ChevronsRightLeft className="size-4" />
+          )}
+        </button>
+      </header>
+      <div className="flex flex-1 gap-4">{children}</div>
+    </section>
+  );
+}
+
+/** Grupo recolhido: resumo por coluna + alvo de soltura (vai para a 1ª coluna do grupo). */
+function CollapsedDrop({
+  dropColumnId,
+  columns,
+  color,
+}: {
+  dropColumnId: string;
+  columns: { id: string; title: string; count: number }[];
+  color: string;
+}) {
+  const { setNodeRef, isOver } = useDroppable({ id: COL_PREFIX + dropColumnId });
+  return (
+    <div
+      ref={setNodeRef}
+      className="flex min-h-40 w-44 shrink-0 snap-center flex-col gap-2 rounded-3xl bg-bg p-3 shadow-neu-inset transition-shadow"
+      style={
+        isOver
+          ? { boxShadow: `var(--shadow-neu-inset), 0 0 0 2px ${color}88, 0 0 24px ${color}33` }
+          : undefined
+      }
+    >
+      {columns.map((c) => (
+        <div
+          key={c.id}
+          className="flex items-center justify-between rounded-xl px-3 py-2 text-xs shadow-neu-sm"
+        >
+          <span className="font-medium">{c.title}</span>
+          <span className="text-muted tabular-nums">{c.count}</span>
+        </div>
+      ))}
+      <p className="mt-auto pt-2 text-center text-[11px] leading-snug text-muted">
+        Solte aqui para mover para {columns[0]?.title}
+      </p>
+    </div>
   );
 }
 

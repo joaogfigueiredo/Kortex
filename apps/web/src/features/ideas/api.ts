@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Idea, IdeaCreate, IdeaStatus, IdeaUpdate, Project } from '@kortex/shared';
 import { api } from '../../lib/api';
 import { toast } from '../../stores/toast';
+import { reorderOptimistic } from '../../lib/kanban';
 
 const KEY = ['ideas'] as const;
 
@@ -56,25 +57,21 @@ export function useIdeaMutations() {
    * por um frame depois de solto.
    */
   const move = (id: number, status: IdeaStatus, index: number) => {
-    qc.setQueryData<Idea[]>(KEY, (list) => (list ? reorder(list, id, status, index) : list));
+    qc.setQueryData<Idea[]>(KEY, (list) => {
+      const moving = list?.find((i) => i.id === id);
+      if (!list || !moving) return list;
+      const completedAt =
+        status === 'done' ? (moving.completedAt ?? new Date().toISOString()) : null;
+      return reorderOptimistic(
+        list,
+        id,
+        (i) => i.status === status,
+        { status, completedAt },
+        index,
+      );
+    });
     moveMutation.mutate({ id, status, index });
   };
 
   return { create, update, remove, promote, move };
-}
-
-/** Reordena a lista local: as colunas são montadas na ordem do array. */
-function reorder(list: Idea[], id: number, status: IdeaStatus, index: number): Idea[] {
-  const moving = list.find((i) => i.id === id);
-  if (!moving) return list;
-  const rest = list.filter((i) => i.id !== id);
-  const column = rest.filter((i) => i.status === status);
-  const others = rest.filter((i) => i.status !== status);
-  const updated: Idea = {
-    ...moving,
-    status,
-    completedAt: status === 'done' ? (moving.completedAt ?? new Date().toISOString()) : null,
-  };
-  column.splice(Math.min(index, column.length), 0, updated);
-  return [...others, ...column];
 }

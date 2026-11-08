@@ -1,16 +1,10 @@
 import { BrowserRouter, Link, Route, Routes } from 'react-router';
-import {
-  CalendarDays,
-  ChartColumn,
-  FolderKanban,
-  GraduationCap,
-  HeartPulse,
-  Wallet,
-} from 'lucide-react';
+import { CalendarDays, ChartColumn, GraduationCap, HeartPulse, Wallet } from 'lucide-react';
 import { AppShell } from '../components/layout/AppShell';
 import { Card } from '../components/ui';
 import { HomePage } from '../features/home/HomePage';
 import { IdeasPage } from '../features/ideas/IdeasPage';
+import { ProjectsPage } from '../features/projects/ProjectsPage';
 import { SettingsPage } from '../features/settings/SettingsPage';
 import { ComingSoon } from '../features/placeholder/ComingSoon';
 
@@ -36,22 +30,7 @@ export function App() {
         <Route element={<AppShell />}>
           <Route index element={<HomePage />} />
           <Route path="ideias" element={<IdeasPage />} />
-          <Route
-            path="projetos"
-            element={
-              <ComingSoon
-                title="Projetos"
-                subtitle="Do rascunho ao deploy"
-                icon={FolderKanban}
-                step={4}
-                features={[
-                  'Ideias → Iniciados → Desenvolvimento (Nível 1, 2, 3) → Finalizado → Deployzado',
-                  'Links de repositório e deploy',
-                  'Datas automáticas de início, fim e deploy',
-                ]}
-              />
-            }
-          />
+          <Route path="projetos" element={<ProjectsPage />} />
           <Route
             path="financas"
             element={

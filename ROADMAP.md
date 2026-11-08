@@ -34,9 +34,9 @@ Todo passo termina com o app rodando, uma checagem manual no navegador (desktop 
 
 ## Passo 4: Projetos
 
-- [ ] Colunas Ideias, Iniciados, **Desenvolvimento** (Nível 1, 2 e 3), Finalizado e Deployzado
-- [ ] Grupo Desenvolvimento colapsável no mobile
-- [ ] Datas automáticas (started/finished/deployed), links de repo e deploy
+- [x] Colunas Ideias, Iniciados, **Desenvolvimento** (Nível 1, 2 e 3), Finalizado e Deployzado
+- [x] Grupo Desenvolvimento colapsável (lembra o estado por navegador)
+- [x] Datas automáticas (started/finished/deployed), links de repo e deploy
 
 ## Passo 5: Atividades financeiras
 
