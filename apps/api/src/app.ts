@@ -4,6 +4,7 @@ import { sql } from 'drizzle-orm';
 import type { DB } from './db/client';
 import { registerErrorHandler } from './plugins/error-handler';
 import { settingsRoutes } from './modules/settings/routes';
+import { ideasRoutes } from './modules/ideas/routes';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -36,7 +37,8 @@ export async function buildApp({ db, logger = true }: AppOptions) {
   });
 
   await app.register(settingsRoutes, { prefix: '/api/settings' });
-  // Próximos módulos (Passos 3+): ideas, projects, finance, reminders...
+  await app.register(ideasRoutes, { prefix: '/api/ideas' });
+  // Próximos módulos (Passos 4+): projects, finance, reminders...
 
   return app;
 }

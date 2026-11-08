@@ -28,9 +28,9 @@ Todo passo termina com o app rodando, uma checagem manual no navegador (desktop 
 
 ## Passo 3: Kanban genérico e Ideias
 
-- [ ] Board/Column/Card com dnd-kit (toque e teclado), ordenação fracionária
-- [ ] CRUD de ideias e as 4 colunas (Organizadas e arquitetadas, Iniciadas, Em desenvolvimento, Finalizadas)
-- [ ] Ação "Promover a projeto"
+- [x] Board/Column/Card com dnd-kit (toque e teclado), ordenação fracionária
+- [x] CRUD de ideias e as 4 colunas (Organizadas e arquitetadas, Iniciadas, Em desenvolvimento, Finalizadas)
+- [x] Ação "Promover a projeto"
 
 ## Passo 4: Projetos
 

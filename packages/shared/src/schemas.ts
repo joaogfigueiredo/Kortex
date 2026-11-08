@@ -30,7 +30,21 @@ export const ideaCreate = z.object({
   status: z.enum(IDEA_STATUS).default('organized'),
   priority: z.number().int().min(1).max(3).default(2),
 });
-export const ideaUpdate = ideaCreate.partial().extend({ position: z.number().optional() });
+/** PATCH sem defaults: campos ausentes não são alterados. */
+export const ideaUpdate = z
+  .object({
+    title,
+    description: optionalText,
+    status: z.enum(IDEA_STATUS),
+    priority: z.number().int().min(1).max(3),
+  })
+  .partial();
+
+/** Mover card no Kanban: coluna de destino + índice dentro dela. */
+export const ideaMove = z.object({
+  status: z.enum(IDEA_STATUS),
+  index: z.number().int().min(0),
+});
 
 const projectBase = z.object({
   title,
@@ -131,7 +145,9 @@ export const dailyGoalCreate = z.object({
   icon: z.string().max(40).nullish(),
 });
 
-export type IdeaCreate = z.infer<typeof ideaCreate>;
+export type IdeaCreate = z.input<typeof ideaCreate>;
+export type IdeaUpdate = z.infer<typeof ideaUpdate>;
+export type IdeaMove = z.infer<typeof ideaMove>;
 export type ProjectCreate = z.infer<typeof projectCreate>;
 export type FinanceActivityCreate = z.infer<typeof financeActivityCreate>;
 export type ReminderCreate = z.infer<typeof reminderCreate>;

@@ -31,7 +31,13 @@ export function Modal({
   useEffect(() => {
     const dialog = ref.current;
     if (!dialog) return;
-    if (open && !dialog.open) dialog.showModal();
+    if (open && !dialog.open) {
+      dialog.showModal();
+      // O <dialog> foca o 1º elemento focável (o botão fechar); preferimos o 1º campo.
+      dialog
+        .querySelector<HTMLElement>('[data-autofocus], input:not([type=hidden]), textarea, select')
+        ?.focus();
+    }
     if (!open && dialog.open) dialog.close();
   }, [open]);
 

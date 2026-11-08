@@ -5,12 +5,12 @@ import {
   FolderKanban,
   GraduationCap,
   HeartPulse,
-  Lightbulb,
   Wallet,
 } from 'lucide-react';
 import { AppShell } from '../components/layout/AppShell';
 import { Card } from '../components/ui';
 import { HomePage } from '../features/home/HomePage';
+import { IdeasPage } from '../features/ideas/IdeasPage';
 import { SettingsPage } from '../features/settings/SettingsPage';
 import { ComingSoon } from '../features/placeholder/ComingSoon';
 
@@ -35,22 +35,7 @@ export function App() {
       <Routes>
         <Route element={<AppShell />}>
           <Route index element={<HomePage />} />
-          <Route
-            path="ideias"
-            element={
-              <ComingSoon
-                title="Ideias"
-                subtitle="Registre e evolua seus insights"
-                icon={Lightbulb}
-                step={3}
-                features={[
-                  'Kanban: Organizadas e arquitetadas → Iniciadas → Em desenvolvimento → Finalizadas',
-                  'Arrastar e soltar (mouse e toque)',
-                  'Promover ideia a projeto',
-                ]}
-              />
-            }
-          />
+          <Route path="ideias" element={<IdeasPage />} />
           <Route
             path="projetos"
             element={

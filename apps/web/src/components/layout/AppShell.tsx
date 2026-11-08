@@ -3,7 +3,7 @@ import { NavLink, Outlet, useLocation } from 'react-router';
 import clsx from 'clsx';
 import { LayoutGrid } from 'lucide-react';
 import { NAV } from '../../app/nav';
-import { Modal } from '../ui';
+import { Modal, Toaster } from '../ui';
 import { Logo } from './Logo';
 import { ThemeQuickToggle, ThemeSwitch } from './ThemeSwitch';
 
@@ -128,6 +128,8 @@ export function AppShell() {
           </li>
         </ul>
       </nav>
+
+      <Toaster />
 
       <Modal open={moreOpen} onClose={() => setMoreOpen(false)} title="Módulos">
         <div className="grid grid-cols-3 gap-4 pb-2">
