@@ -63,8 +63,8 @@ Todo passo termina com o app rodando, uma checagem manual no navegador (desktop 
 
 ## Passo 9: Home e metas diárias
 
-- [ ] Metas recorrentes (diárias ou em dias específicos) com check rápido
-- [ ] Mini-agenda interativa e resumo do dia (próximos compromissos, refeições, metas)
+- [x] Metas recorrentes (diárias ou em dias específicos) com check rápido
+- [x] Mini-agenda interativa e resumo do dia (próximos compromissos, refeições, metas)
 
 ## Passo 10: Captura rápida e Modo Foco
 

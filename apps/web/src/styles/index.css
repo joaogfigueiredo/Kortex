@@ -125,6 +125,21 @@
   }
 }
 
+@keyframes kortex-pop {
+  0% {
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.18);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.kortex-pop {
+  animation: kortex-pop 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
 @keyframes toast-in {
   from {
     opacity: 0;

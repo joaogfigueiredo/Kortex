@@ -13,9 +13,14 @@ const STATUS: { value: MealStatus; label: string; icon: LucideIcon; color: strin
 export function MealsCard({
   day,
   onEditPlan,
+  compact,
+  title = 'Refeições',
 }: {
   day: WellnessDay | undefined;
   onEditPlan: () => void;
+  /** Versão enxuta (Home): sem descrição do prato. */
+  compact?: boolean;
+  title?: string;
 }) {
   const { setMealLog } = useHealthMutations();
   const meals = day?.meals ?? [];
@@ -25,7 +30,7 @@ export function MealsCard({
     <Card>
       <CardHeader
         icon={<Utensils className="size-5" />}
-        title="Refeições"
+        title={title}
         subtitle={
           meals.length ? `${done} de ${meals.length} feitas` : 'Nenhuma refeição prevista neste dia'
         }
@@ -77,7 +82,9 @@ export function MealsCard({
                       </span>
                     )}
                   </p>
-                  {m.description && <p className="truncate text-xs text-muted">{m.description}</p>}
+                  {!compact && m.description && (
+                    <p className="truncate text-xs text-muted">{m.description}</p>
+                  )}
                 </div>
                 <div role="group" aria-label={`Marcar ${m.name}`} className="flex shrink-0 gap-1.5">
                   {STATUS.map((s) => {
