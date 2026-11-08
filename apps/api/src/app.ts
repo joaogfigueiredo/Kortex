@@ -3,6 +3,7 @@ import cors from '@fastify/cors';
 import { sql } from 'drizzle-orm';
 import type { DB } from './db/client';
 import { registerErrorHandler } from './plugins/error-handler';
+import { settingsRoutes } from './modules/settings/routes';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -34,8 +35,8 @@ export async function buildApp({ db, logger = true }: AppOptions) {
     return { status: 'ok', sqlite: row.v, time: new Date().toISOString() };
   });
 
-  // Módulos de domínio serão registrados aqui (Passos 3+):
-  // await app.register(ideasRoutes, { prefix: '/api/ideas' });
+  await app.register(settingsRoutes, { prefix: '/api/settings' });
+  // Próximos módulos (Passos 3+): ideas, projects, finance, reminders...
 
   return app;
 }

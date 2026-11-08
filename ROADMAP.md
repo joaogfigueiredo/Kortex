@@ -21,10 +21,10 @@ Todo passo termina com o app rodando, uma checagem manual no navegador (desktop 
 
 ## Passo 2: Design system e layout
 
-- [ ] Tokens claro/escuro, utilitários `shadow-neu` / `shadow-neu-inset` e accent neon
-- [ ] Componentes `ui/`: Card, Button, IconButton, Input, Textarea, Select, Modal, Toggle, Progress, Badge
-- [ ] Toggle de tema (segue `prefers-color-scheme` e salva em `settings`)
-- [ ] Layout mobile-first: BottomNav no celular, Sidebar no desktop, rotas de todos os módulos
+- [x] Tokens claro/escuro, utilitários `shadow-neu` / `shadow-neu-inset` e accent neon
+- [x] Componentes `ui/`: Card, Button, IconButton, Input, Textarea, Select, Modal, Toggle, Progress, Badge
+- [x] Toggle de tema (segue `prefers-color-scheme` e salva em `settings`)
+- [x] Layout mobile-first: BottomNav no celular, Sidebar no desktop, rotas de todos os módulos
 
 ## Passo 3: Kanban genérico e Ideias
 

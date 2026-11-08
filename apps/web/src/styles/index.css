@@ -1,0 +1,125 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+
+/* Modo escuro controlado por data-theme no <html> (não só pela mídia do sistema). */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* ============================================================
+   Tokens — Kortex
+   Neomorfismo minimalista + accent azul bebê neon.
+   ============================================================ */
+:root {
+  color-scheme: light;
+
+  --k-bg: #eef1f5; /* off-white */
+  --k-surface: #f6f8fb; /* modais / folhas */
+  --k-fg: #1b2230;
+  --k-muted: #5b6678;
+  --k-line: rgb(27 34 48 / 0.07);
+
+  --k-sh-light: #ffffff;
+  --k-sh-dark: #c5cedb;
+
+  --k-accent: #6fe3ff; /* azul bebê neon */
+  --k-accent-hover: #3fd4ff;
+  --k-on-accent: #04222d;
+  --k-accent-ink: #07729a; /* accent legível como texto no fundo claro */
+  --k-accent-soft: rgb(111 227 255 / 0.18);
+  --k-glow: 0 0 0 1px rgb(111 227 255 / 0.4), 0 0 18px rgb(111 227 255 / 0.33);
+
+  /* Paleta neon secundária (categorias / gráficos) */
+  --k-violet: #b79cff;
+  --k-mint: #4df5b8;
+  --k-amber: #ffd166;
+  --k-pink: #ff8fc7;
+  --k-red: #ff6b6b;
+  --k-danger: #c62828; /* vermelho legível como texto no claro */
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --k-bg: #1e2128; /* cinza escuro sofisticado */
+  --k-surface: #252932;
+  --k-fg: #e6eaf0;
+  --k-muted: #9aa3b2;
+  --k-line: rgb(230 234 240 / 0.07);
+
+  --k-sh-light: #2a2f38;
+  --k-sh-dark: #131519;
+
+  --k-accent: #6fe3ff;
+  --k-accent-hover: #9aebff;
+  --k-on-accent: #04222d;
+  --k-accent-ink: #6fe3ff;
+  --k-accent-soft: rgb(111 227 255 / 0.12);
+  --k-glow: 0 0 0 1px rgb(111 227 255 / 0.5), 0 0 22px rgb(111 227 255 / 0.4);
+  --k-danger: #ff6b6b;
+}
+
+@theme inline {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --color-bg: var(--k-bg);
+  --color-surface: var(--k-surface);
+  --color-fg: var(--k-fg);
+  --color-muted: var(--k-muted);
+  --color-line: var(--k-line);
+  --color-accent: var(--k-accent);
+  --color-accent-hover: var(--k-accent-hover);
+  --color-on-accent: var(--k-on-accent);
+  --color-accent-ink: var(--k-accent-ink);
+  --color-accent-soft: var(--k-accent-soft);
+  --color-violet: var(--k-violet);
+  --color-mint: var(--k-mint);
+  --color-amber: var(--k-amber);
+  --color-pink: var(--k-pink);
+  --color-red: var(--k-red);
+  --color-danger: var(--k-danger);
+
+  /* Sombras neomórficas: elevado / pressionado */
+  --shadow-neu: 7px 7px 16px var(--k-sh-dark), -7px -7px 16px var(--k-sh-light);
+  --shadow-neu-sm: 3px 3px 8px var(--k-sh-dark), -3px -3px 8px var(--k-sh-light);
+  --shadow-neu-inset: inset 5px 5px 11px var(--k-sh-dark), inset -5px -5px 11px var(--k-sh-light);
+  --shadow-neu-inset-sm: inset 2px 2px 5px var(--k-sh-dark), inset -2px -2px 5px var(--k-sh-light);
+  --shadow-glow: var(--k-glow);
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    @apply bg-bg font-sans text-fg;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+  }
+  :focus-visible {
+    outline: 2px solid var(--k-accent);
+    outline-offset: 3px;
+    border-radius: 0.75rem;
+  }
+  ::selection {
+    background: var(--k-accent);
+    color: var(--k-on-accent);
+  }
+  dialog::backdrop {
+    background: rgb(10 12 16 / 0.45);
+    backdrop-filter: blur(4px);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@utility pb-safe {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}

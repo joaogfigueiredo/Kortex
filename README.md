@@ -15,8 +15,10 @@ Sistema pessoal de organização e produtividade: Kanbans de ideias, projetos e 
 git clone https://github.com/joaogfigueiredo/Kortex.git
 cd Kortex
 npm install
-npm run dev        # API em http://localhost:3333 (e o web, a partir do Passo 2)
+npm run dev        # web em http://localhost:5173 · API em http://localhost:3333
 ```
+
+Para abrir no celular (mesma rede Wi-Fi), rode `npm run dev -w @kortex/web -- --host` junto com a API e acesse o IP da máquina na porta 5173. Acesso fora de casa e PIN entram no Passo 13.
 
 Na primeira execução, o banco é criado, as migrations são aplicadas e os dados de exemplo entram automaticamente.
 
