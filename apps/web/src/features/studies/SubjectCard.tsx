@@ -1,7 +1,8 @@
 import clsx from 'clsx';
-import { ArrowUpCircle, Plus } from 'lucide-react';
+import { ArrowUpCircle, Plus, Timer } from 'lucide-react';
 import { STUDY_LEVEL, STUDY_LEVEL_LABEL, type StudySubject } from '@kortex/shared';
-import { Button, Progress } from '../../components/ui';
+import { Button, IconButton, Progress } from '../../components/ui';
+import { useFocus } from '../../stores/focus';
 import { todayStr } from '../../lib/dates';
 import { formatDuration, formatHours } from '../../lib/duration';
 import { timeAgo } from '../../lib/format';
@@ -50,6 +51,7 @@ export function SubjectCard({
   onLog: () => void;
   onLevelUp: () => void;
 }) {
+  const openFocus = useFocus((st) => st.openSetup);
   const fresh = freshness(s.lastStudiedAt, todayStr());
   const next = nextLevel(s.level);
   const goalPct = s.targetHours ? Math.min(100, (s.totalSec / 3600 / s.targetHours) * 100) : null;
@@ -126,9 +128,20 @@ export function SubjectCard({
           </Button>
         ) : (
           !s.archived && (
-            <Button size="sm" icon={<Plus className="size-4" />} onClick={onLog}>
-              Sessão
-            </Button>
+            <div className="flex gap-2">
+              <IconButton
+                label={`Focar em ${s.name}`}
+                size="sm"
+                onClick={() =>
+                  openFocus({ module: 'study', refId: s.id, label: `Estudo · ${s.name}` })
+                }
+              >
+                <Timer className="size-4 text-accent-ink" />
+              </IconButton>
+              <Button size="sm" icon={<Plus className="size-4" />} onClick={onLog}>
+                Sessão
+              </Button>
+            </div>
           )
         )}
       </div>

@@ -1,9 +1,13 @@
 import { Suspense, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router';
 import clsx from 'clsx';
-import { LayoutGrid } from 'lucide-react';
+import { LayoutGrid, Timer } from 'lucide-react';
 import { NAV } from '../../app/nav';
-import { Modal, Toaster } from '../ui';
+import { IconButton, Modal, Toaster } from '../ui';
+import { QuickCapture } from '../../features/capture/QuickCapture';
+import { FocusOverlay } from '../../features/focus/FocusOverlay';
+import { FocusSetupModal } from '../../features/focus/FocusSetupModal';
+import { useFocus } from '../../stores/focus';
 import { Logo } from './Logo';
 import { ThemeQuickToggle, ThemeSwitch } from './ThemeSwitch';
 
@@ -13,6 +17,7 @@ const isActive = (to: string, pathname: string) =>
 export function AppShell() {
   const { pathname } = useLocation();
   const [moreOpen, setMoreOpen] = useState(false);
+  const openFocus = useFocus((st) => st.openSetup);
   const current = NAV.find((n) => isActive(n.to, pathname));
   const primary = NAV.filter((n) => n.mobilePrimary);
   const secondary = NAV.filter((n) => !n.mobilePrimary);
@@ -23,7 +28,15 @@ export function AppShell() {
       {/* ---------- Sidebar (desktop) ---------- */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-68 flex-col p-5 md:flex">
         <div className="flex h-full flex-col rounded-3xl bg-bg p-4 shadow-neu">
-          <Logo className="px-2 pt-1 pb-6" />
+          <Logo className="px-2 pt-1 pb-5" />
+          <button
+            type="button"
+            onClick={() => openFocus()}
+            title="Modo Foco (F)"
+            className="mb-5 flex items-center justify-center gap-2 rounded-2xl bg-accent px-4 py-2.5 text-sm font-semibold text-on-accent shadow-glow transition-all hover:bg-accent-hover active:scale-[0.98]"
+          >
+            <Timer className="size-4" /> Modo Foco
+          </button>
           <nav aria-label="Principal" className="flex-1 space-y-1.5 overflow-y-auto">
             {NAV.map(({ to, label, icon: Icon }) => (
               <NavLink
@@ -59,8 +72,15 @@ export function AppShell() {
       {/* ---------- Header (mobile) ---------- */}
       <header className="sticky top-0 z-20 flex items-center justify-between bg-bg/85 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 backdrop-blur-md md:hidden">
         <Logo compact />
-        <h1 className="text-base font-semibold">{current?.label ?? 'Kortex'}</h1>
-        <ThemeQuickToggle />
+        <p className="text-base font-semibold" aria-hidden>
+          {current?.label ?? 'Kortex'}
+        </p>
+        <div className="flex gap-2">
+          <IconButton label="Modo Foco" size="sm" onClick={() => openFocus()}>
+            <Timer className="size-4.5 text-accent-ink" />
+          </IconButton>
+          <ThemeQuickToggle />
+        </div>
       </header>
 
       {/* ---------- Conteúdo ---------- */}
@@ -133,6 +153,9 @@ export function AppShell() {
       </nav>
 
       <Toaster />
+      <QuickCapture />
+      <FocusSetupModal />
+      <FocusOverlay />
 
       <Modal open={moreOpen} onClose={() => setMoreOpen(false)} title="Módulos">
         <div className="grid grid-cols-3 gap-4 pb-2">

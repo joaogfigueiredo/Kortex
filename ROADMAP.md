@@ -68,9 +68,9 @@ Todo passo termina com o app rodando, uma checagem manual no navegador (desktop 
 
 ## Passo 10: Captura rápida e Modo Foco
 
-- [ ] Botão flutuante global: Ideia ou Lembrete em segundos (com atalho de teclado)
-- [ ] Modo Foco em tela cheia: cronômetro ou timer, fundo escuro, botão discreto para pausar/sair, alarme, Wake Lock
-- [ ] Sessões salvas em `time_entries`, vinculadas a um módulo ou item
+- [x] Botão flutuante global: Ideia ou Lembrete em segundos (com atalho de teclado)
+- [x] Modo Foco em tela cheia: cronômetro ou timer, fundo escuro, botão discreto para pausar/sair, alarme, Wake Lock
+- [x] Sessões salvas em `time_entries`, vinculadas a um módulo ou item
 
 ## Passo 11: Dashboard de produtividade
 
