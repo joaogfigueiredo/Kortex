@@ -5,6 +5,7 @@ import type { DB } from './db/client';
 import { registerErrorHandler } from './plugins/error-handler';
 import { settingsRoutes } from './modules/settings/routes';
 import { ideasRoutes } from './modules/ideas/routes';
+import { projectsRoutes } from './modules/projects/routes';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -38,7 +39,8 @@ export async function buildApp({ db, logger = true }: AppOptions) {
 
   await app.register(settingsRoutes, { prefix: '/api/settings' });
   await app.register(ideasRoutes, { prefix: '/api/ideas' });
-  // Próximos módulos (Passos 4+): projects, finance, reminders...
+  await app.register(projectsRoutes, { prefix: '/api/projects' });
+  // Próximos módulos (Passos 5+): finance, reminders...
 
   return app;
 }

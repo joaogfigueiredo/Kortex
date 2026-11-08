@@ -46,21 +46,55 @@ export const ideaMove = z.object({
   index: z.number().int().min(0),
 });
 
-const projectBase = z.object({
-  title,
-  description: optionalText,
-  status: z.enum(PROJECT_STATUS).default('idea'),
-  devLevel: z.number().int().min(1).max(3).nullish(),
-  repoUrl: z.string().url().nullish(),
-  deployUrl: z.string().url().nullish(),
-});
-export const projectCreate = projectBase.refine(
-  (p) => (p.status === 'development') === (p.devLevel != null),
-  {
-    message: 'Nível de desenvolvimento é obrigatório somente no status "development"',
-    path: ['devLevel'],
-  },
+/** URL http(s); string vazia vira null (campo limpo no formulário). */
+const optionalUrl = z.preprocess(
+  (v) => (typeof v === 'string' && v.trim() === '' ? null : v),
+  z
+    .string()
+    .trim()
+    .max(2000)
+    .regex(/^https?:\/\/\S+$/i, 'URL inválida (use http:// ou https://)')
+    .nullish(),
 );
+const devLevel = z.number().int().min(1).max(3);
+const devLevelRule = {
+  message: 'Nível (1–3) é obrigatório somente em "Desenvolvimento"',
+  path: ['devLevel'],
+};
+const devLevelOk = (p: { status?: string; devLevel?: number | null }) =>
+  (p.status === 'development') === (p.devLevel != null);
+
+export const projectCreate = z
+  .object({
+    title,
+    description: optionalText,
+    status: z.enum(PROJECT_STATUS).default('idea'),
+    devLevel: devLevel.nullish(),
+    repoUrl: optionalUrl,
+    deployUrl: optionalUrl,
+  })
+  .refine(devLevelOk, devLevelRule);
+
+/** PATCH parcial. Se `status` vier, `devLevel` precisa ser coerente com ele. */
+export const projectUpdate = z
+  .object({
+    title,
+    description: optionalText,
+    status: z.enum(PROJECT_STATUS),
+    devLevel: devLevel.nullable(),
+    repoUrl: optionalUrl,
+    deployUrl: optionalUrl,
+  })
+  .partial()
+  .refine((p) => p.status === undefined || devLevelOk(p), devLevelRule);
+
+export const projectMove = z
+  .object({
+    status: z.enum(PROJECT_STATUS),
+    devLevel: devLevel.nullish(),
+    index: z.number().int().min(0),
+  })
+  .refine(devLevelOk, devLevelRule);
 
 export const financeActivityCreate = z.object({
   title,
@@ -149,6 +183,8 @@ export type IdeaCreate = z.input<typeof ideaCreate>;
 export type IdeaUpdate = z.infer<typeof ideaUpdate>;
 export type IdeaMove = z.infer<typeof ideaMove>;
 export type ProjectCreate = z.infer<typeof projectCreate>;
+export type ProjectUpdate = z.infer<typeof projectUpdate>;
+export type ProjectMove = z.infer<typeof projectMove>;
 export type FinanceActivityCreate = z.infer<typeof financeActivityCreate>;
 export type ReminderCreate = z.infer<typeof reminderCreate>;
 export type StudySubjectCreate = z.infer<typeof studySubjectCreate>;
