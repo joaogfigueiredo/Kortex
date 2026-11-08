@@ -12,6 +12,7 @@ import { timeRoutes } from './modules/time/routes';
 import { studiesRoutes } from './modules/studies/routes';
 import { mealsRoutes, wellnessRoutes, workoutsRoutes } from './modules/health/routes';
 import { goalsRoutes } from './modules/goals/routes';
+import { dashboardRoutes } from './modules/dashboard/routes';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -54,7 +55,8 @@ export async function buildApp({ db, logger = true }: AppOptions) {
   await app.register(mealsRoutes, { prefix: '/api/meals' });
   await app.register(wellnessRoutes, { prefix: '/api/wellness' });
   await app.register(goalsRoutes, { prefix: '/api/goals' });
-  // Próximos módulos (Passos 10+): dashboard, export...
+  await app.register(dashboardRoutes, { prefix: '/api/dashboard' });
+  // Próximo (Passo 12): export/backup
 
   return app;
 }

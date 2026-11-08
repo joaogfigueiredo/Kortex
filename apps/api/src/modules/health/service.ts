@@ -140,17 +140,18 @@ export function wellnessDay(db: DB, date: string): WellnessDay {
 export const dietPct = (planned: number, done: number, partial: number) =>
   planned ? Math.round(((done + partial * 0.5) / planned) * 100) : null;
 
-export function wellnessSummary(db: DB, today: string): WellnessSummary {
-  const from = addDays(today, -6);
+/** Estatísticas por dia (treinos + dieta) para `days` dias a partir de `from`. */
+export function wellnessByDay(db: DB, from: string, days: number): WellnessDayStats[] {
+  const to = addDays(from, days - 1);
   const meals = listMeals(db);
   const logs = db
     .select()
     .from(mealLogs)
-    .where(and(gte(mealLogs.date, from), lte(mealLogs.date, today)))
+    .where(and(gte(mealLogs.date, from), lte(mealLogs.date, to)))
     .all();
-  const wk = listWorkouts(db, { from, to: today, limit: 500 });
+  const wk = listWorkouts(db, { from, to, limit: 5000 });
 
-  const last7: WellnessDayStats[] = Array.from({ length: 7 }, (_, i) => {
+  return Array.from({ length: days }, (_, i) => {
     const date = addDays(from, i);
     const planned = mealsForDate(meals, date);
     const ids = new Set(planned.map((m) => m.id));
@@ -169,17 +170,26 @@ export function wellnessSummary(db: DB, today: string): WellnessSummary {
       dietPct: dietPct(planned.length, done, partial),
     };
   });
+}
 
-  // Média só dos dias com plano E alguma marcação: dias sem registro não viram "0%".
-  const logged = last7.filter((d) => d.dietPct != null && d.mealsLogged > 0);
+/** Média da dieta só nos dias com plano E alguma marcação (dia sem registro não vira "0%"). */
+export function averageDiet(days: WellnessDayStats[]) {
+  const logged = days.filter((d) => d.dietPct != null && d.mealsLogged > 0);
   return {
-    last7,
-    weekWorkouts: wk.length,
-    weekWorkoutMin: last7.reduce((n, d) => n + d.workoutMin, 0),
-    activeDays: last7.filter((d) => d.workouts > 0).length,
     loggedDays: logged.length,
     dietPct: logged.length
       ? Math.round(logged.reduce((n, d) => n + d.dietPct!, 0) / logged.length)
       : null,
+  };
+}
+
+export function wellnessSummary(db: DB, today: string): WellnessSummary {
+  const last7 = wellnessByDay(db, addDays(today, -6), 7);
+  return {
+    last7,
+    weekWorkouts: last7.reduce((n, d) => n + d.workouts, 0),
+    weekWorkoutMin: last7.reduce((n, d) => n + d.workoutMin, 0),
+    activeDays: last7.filter((d) => d.workouts > 0).length,
+    ...averageDiet(last7),
   };
 }

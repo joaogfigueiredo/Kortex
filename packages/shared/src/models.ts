@@ -246,4 +246,60 @@ export interface GoalsSummary {
   perfectStreak: number;
 }
 
+export type DashboardRange = 'day' | 'week' | 'month';
+
+/** Segundos por área num dia (módulos do registro de tempo). */
+export interface TimeByDay {
+  date: string;
+  study: number;
+  work: number;
+  project: number;
+  idea: number;
+  finance: number;
+  other: number;
+}
+
+export interface DashboardKpis {
+  /** Todo o tempo registrado (estudo, foco, trabalho…). */
+  focusSec: number;
+  studySec: number;
+  workouts: number;
+  workoutMin: number;
+  dietPct: number | null;
+  goalsPct: number | null;
+}
+
+export interface DashboardData {
+  range: DashboardRange;
+  from: string;
+  to: string;
+  kpis: DashboardKpis;
+  /** Mesmo período imediatamente anterior, para comparação. */
+  prev: DashboardKpis;
+  timeByDay: TimeByDay[];
+  studyBySubject: { id: number; name: string; color: string; sec: number }[];
+  projects: {
+    id: number;
+    title: string;
+    status: ProjectStatus;
+    sec: number;
+    activeDays: number;
+    lastAt: string | null;
+  }[];
+  projectsByStatus: Record<ProjectStatus, number>;
+  workoutsByDay: { date: string; min: number; count: number }[];
+  dietByDay: { date: string; pct: number | null; logged: boolean }[];
+  goalsByDay: { date: string; planned: number; done: number }[];
+  streaks: { study: number; goalsPerfect: number };
+  /** Dias do período com tempo de trabalho / com qualquer tempo registrado. */
+  workDays: number;
+  activeDays: number;
+  ideas: { byStatus: Record<IdeaStatus, number>; created: number; completed: number };
+  finance: {
+    byStatus: Record<FinanceStatus, number>;
+    activeIncomeCents: number;
+    openAlerts: number;
+  };
+}
+
 export const PRIORITY_LABEL: Record<number, string> = { 1: 'Alta', 2: 'Média', 3: 'Baixa' };

@@ -104,10 +104,10 @@ export function goalsOfDay(db: DB, date: string): GoalOfDay[] {
     }));
 }
 
-export function goalsSummary(db: DB, today: string): GoalsSummary {
+function goalDayStats(db: DB, upTo: string) {
   const goals = listGoals(db).filter((g) => g.active);
-  const checks = checksBetween(db, addDays(today, -STREAK_LOOKBACK), today);
-  const dayStats = (date: string) => {
+  const checks = checksBetween(db, addDays(upTo, -STREAK_LOOKBACK), upTo);
+  return (date: string) => {
     const planned = goals.filter((g) => appliesOn(g, date));
     return {
       date,
@@ -115,22 +115,37 @@ export function goalsSummary(db: DB, today: string): GoalsSummary {
       done: planned.filter((g) => checks.has(`${g.id}|${date}`)).length,
     };
   };
+}
 
-  const last7 = Array.from({ length: 7 }, (_, i) => dayStats(addDays(today, i - 6)));
-  const planned = last7.reduce((n, d) => n + d.planned, 0);
-  const done = last7.reduce((n, d) => n + d.done, 0);
+/** Metas previstas x feitas por dia, `days` dias a partir de `from`. */
+export function goalsByDay(db: DB, from: string, days: number) {
+  const stats = goalDayStats(db, addDays(from, days - 1));
+  return Array.from({ length: days }, (_, i) => stats(addDays(from, i)));
+}
 
-  // Dias "perfeitos" seguidos; dias sem nada previsto não quebram nem contam.
-  let perfectStreak = 0;
+/** Dias "perfeitos" seguidos até `today`; dias sem nada previsto não quebram nem contam. */
+export function perfectStreak(db: DB, today: string) {
+  const stats = goalDayStats(db, today);
+  let streak = 0;
   let d = today;
-  const t = dayStats(d);
+  const t = stats(d);
   if (t.planned && t.done < t.planned) d = addDays(d, -1);
   for (let i = 0; i < STREAK_LOOKBACK; i++, d = addDays(d, -1)) {
-    const s = dayStats(d);
+    const s = stats(d);
     if (!s.planned) continue;
     if (s.done < s.planned) break;
-    perfectStreak++;
+    streak++;
   }
+  return streak;
+}
 
-  return { last7, weekPct: planned ? Math.round((done / planned) * 100) : null, perfectStreak };
+export const pctOf = (days: { planned: number; done: number }[]) => {
+  const planned = days.reduce((n, d) => n + d.planned, 0);
+  const done = days.reduce((n, d) => n + d.done, 0);
+  return planned ? Math.round((done / planned) * 100) : null;
+};
+
+export function goalsSummary(db: DB, today: string): GoalsSummary {
+  const last7 = goalsByDay(db, addDays(today, -6), 7);
+  return { last7, weekPct: pctOf(last7), perfectStreak: perfectStreak(db, today) };
 }

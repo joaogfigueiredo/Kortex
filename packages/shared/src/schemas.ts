@@ -272,6 +272,12 @@ export const timeEntryQuery = z.object({
 /** O cliente informa o "hoje" local (semana, sequência…) — sem depender do fuso do servidor. */
 export const todayQuery = z.object({ today: isoDate });
 
+export const DASHBOARD_RANGE = ['day', 'week', 'month'] as const;
+export const dashboardQuery = z.object({
+  today: isoDate,
+  range: z.enum(DASHBOARD_RANGE).default('week'),
+});
+
 const workoutType = z.string().trim().min(1, 'Obrigatório').max(60);
 const hhmm = z.string().regex(/^\d{2}:\d{2}$/, 'Horário inválido (HH:mm)');
 
