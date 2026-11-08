@@ -147,19 +147,77 @@ export const financeEntryUpdate = z
   .partial();
 
 export const reminderCategoryCreate = z.object({ name: title, color: hexColor });
+export const reminderCategoryUpdate = reminderCategoryCreate.partial();
 
-export const reminderCreate = z.object({
+/**
+ * Horário "flutuante" (local, sem fuso): "2026-11-20T15:00".
+ * Como uma agenda de papel: 15h é 15h, independente de fuso/horário de verão.
+ */
+const localDateTime = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/, 'Data/hora inválida (YYYY-MM-DDTHH:mm)');
+
+const reminderFields = z.object({
   title,
   description: optionalText,
-  kind: z.enum(REMINDER_KIND).default('reminder'),
-  categoryId: z.number().int().positive().nullish(),
-  startAt: isoDateTime,
-  endAt: isoDateTime.nullish(),
-  allDay: z.boolean().default(false),
-  recurrence: z.enum(RECURRENCE).default('none'),
-  recurrenceWeekdays: weekdayMask.nullish(),
-  recurrenceUntil: isoDate.nullish(),
-  notifyMinutesBefore: z.number().int().nonnegative().nullish(),
+  kind: z.enum(REMINDER_KIND),
+  categoryId: z.number().int().positive().nullable(),
+  startAt: localDateTime,
+  endAt: localDateTime.nullable(),
+  allDay: z.boolean(),
+  recurrence: z.enum(RECURRENCE),
+  /** Bitmask Dom=1..Sáb=64; obrigatório (>0) em "weekly". */
+  recurrenceWeekdays: weekdayMask.nullable(),
+  /** Último dia (inclusivo) da repetição. */
+  recurrenceUntil: isoDate.nullable(),
+  notifyMinutesBefore: z.number().int().nonnegative().nullable(),
+});
+
+type ReminderShape = Partial<z.infer<typeof reminderFields>>;
+const reminderRules = (r: ReminderShape, ctx: z.RefinementCtx) => {
+  if (r.endAt && r.startAt && r.endAt < r.startAt)
+    ctx.addIssue({ code: 'custom', path: ['endAt'], message: 'O fim deve ser depois do início' });
+  if (r.recurrence === 'weekly' && !r.recurrenceWeekdays)
+    ctx.addIssue({
+      code: 'custom',
+      path: ['recurrenceWeekdays'],
+      message: 'Escolha ao menos um dia',
+    });
+  if (r.recurrenceUntil && r.startAt && r.recurrenceUntil < r.startAt.slice(0, 10))
+    ctx.addIssue({
+      code: 'custom',
+      path: ['recurrenceUntil'],
+      message: 'Deve ser depois do início',
+    });
+};
+
+export const reminderCreate = reminderFields
+  .extend({
+    description: optionalText,
+    kind: z.enum(REMINDER_KIND).default('reminder'),
+    categoryId: z.number().int().positive().nullish(),
+    endAt: localDateTime.nullish(),
+    allDay: z.boolean().default(false),
+    recurrence: z.enum(RECURRENCE).default('none'),
+    recurrenceWeekdays: weekdayMask.nullish(),
+    recurrenceUntil: isoDate.nullish(),
+    notifyMinutesBefore: z.number().int().nonnegative().nullish(),
+  })
+  .superRefine(reminderRules);
+
+/** PATCH parcial; as regras cruzadas são revalidadas no servidor com o estado final. */
+export const reminderUpdate = reminderFields.partial();
+export const reminderRulesCheck = reminderFields.partial().superRefine(reminderRules);
+
+/** Intervalo de datas para expandir ocorrências (máx. ~1 ano). */
+export const occurrenceRange = z
+  .object({ from: isoDate, to: isoDate })
+  .refine((r) => r.from <= r.to, { message: '"from" deve ser <= "to"', path: ['to'] });
+
+export const occurrenceToggle = z.object({ done: z.boolean() });
+export const occurrenceDateParam = z.object({
+  id: z.coerce.number().int().positive(),
+  date: isoDate,
 });
 
 export const studySubjectCreate = z.object({
@@ -224,6 +282,7 @@ export type FinanceMove = z.infer<typeof financeMove>;
 export type FinanceEntryCreate = z.infer<typeof financeEntryCreate>;
 export type FinanceEntryUpdate = z.infer<typeof financeEntryUpdate>;
 export type ReminderCreate = z.infer<typeof reminderCreate>;
+export type ReminderUpdate = z.infer<typeof reminderUpdate>;
 export type StudySubjectCreate = z.infer<typeof studySubjectCreate>;
 export type TimeEntryCreate = z.infer<typeof timeEntryCreate>;
 export type DailyGoalCreate = z.infer<typeof dailyGoalCreate>;

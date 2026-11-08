@@ -7,6 +7,7 @@ import { settingsRoutes } from './modules/settings/routes';
 import { ideasRoutes } from './modules/ideas/routes';
 import { projectsRoutes } from './modules/projects/routes';
 import { financeRoutes } from './modules/finance/routes';
+import { remindersRoutes } from './modules/reminders/routes';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -42,7 +43,8 @@ export async function buildApp({ db, logger = true }: AppOptions) {
   await app.register(ideasRoutes, { prefix: '/api/ideas' });
   await app.register(projectsRoutes, { prefix: '/api/projects' });
   await app.register(financeRoutes, { prefix: '/api/finance' });
-  // Próximos módulos (Passos 6+): reminders, studies...
+  await app.register(remindersRoutes, { prefix: '/api/reminders' });
+  // Próximos módulos (Passos 7+): studies, health, goals...
 
   return app;
 }

@@ -4,6 +4,8 @@ import type {
   FinanceStatus,
   IdeaStatus,
   ProjectStatus,
+  Recurrence,
+  ReminderKind,
 } from './enums';
 
 /** Formatos retornados pela API (JSON). Datas em ISO-8601. */
@@ -72,6 +74,49 @@ export interface FinanceEntry {
   dueAt: string | null;
   resolved: boolean;
   createdAt: string;
+}
+
+export interface ReminderCategory {
+  id: number;
+  name: string;
+  color: string;
+}
+
+export interface Reminder {
+  id: number;
+  title: string;
+  description: string | null;
+  kind: ReminderKind;
+  categoryId: number | null;
+  /** Local/flutuante: "YYYY-MM-DDTHH:mm" */
+  startAt: string;
+  endAt: string | null;
+  allDay: boolean;
+  recurrence: Recurrence;
+  recurrenceWeekdays: number | null;
+  recurrenceUntil: string | null;
+  notifyMinutesBefore: number | null;
+  done: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Uma ocorrência concreta de um lembrete num dia (já expandida a recorrência). */
+export interface Occurrence {
+  reminderId: number;
+  /** "YYYY-MM-DD" */
+  date: string;
+  /** "HH:mm" (null quando o dia todo) */
+  time: string | null;
+  endTime: string | null;
+  title: string;
+  description: string | null;
+  kind: ReminderKind;
+  categoryId: number | null;
+  color: string | null;
+  recurrence: Recurrence;
+  allDay: boolean;
+  done: boolean;
 }
 
 export const PRIORITY_LABEL: Record<number, string> = { 1: 'Alta', 2: 'Média', 3: 'Baixa' };

@@ -51,8 +51,8 @@ CREATE TABLE reminders (
   kind          TEXT NOT NULL DEFAULT 'reminder'
                 CHECK (kind IN ('reminder','appointment','notice')),  -- lembrete / compromisso / aviso
   category_id   INTEGER REFERENCES reminder_categories(id) ON DELETE SET NULL,
-  start_at      TEXT NOT NULL,
-  end_at        TEXT,
+  start_at      TEXT NOT NULL,              -- horário LOCAL "flutuante": YYYY-MM-DDTHH:mm (sem fuso)
+  end_at        TEXT,                       -- idem; >= start_at
   all_day       INTEGER NOT NULL DEFAULT 0,
   recurrence    TEXT NOT NULL DEFAULT 'none'
                 CHECK (recurrence IN ('none','daily','weekly','monthly')),
