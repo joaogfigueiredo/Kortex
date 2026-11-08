@@ -46,10 +46,10 @@ Todo passo termina com o app rodando, uma checagem manual no navegador (desktop 
 
 ## Passo 6: Lembretes e agenda
 
-- [ ] CRUD de lembretes, compromissos e avisos, com recorrência diária, semanal (dias da semana) ou mensal
-- [ ] API que expande ocorrências por intervalo de datas
-- [ ] Calendário mensal com bolinhas coloridas por categoria e lista do dia
-- [ ] Conclusão por ocorrência
+- [x] CRUD de lembretes, compromissos e avisos, com recorrência diária, semanal (dias da semana) ou mensal
+- [x] API que expande ocorrências por intervalo de datas
+- [x] Calendário mensal com bolinhas coloridas por categoria e lista do dia
+- [x] Conclusão por ocorrência
 
 ## Passo 7: Estudos
 

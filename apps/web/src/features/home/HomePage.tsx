@@ -1,7 +1,8 @@
 import { Link } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
-import { CalendarDays, CircleCheck, Sparkles, Target } from 'lucide-react';
-import { Badge, Card, CardHeader, Dot, Progress } from '../../components/ui';
+import { CircleCheck, Sparkles, Target } from 'lucide-react';
+import { Badge, Card, CardHeader, Progress } from '../../components/ui';
+import { MiniAgenda } from '../reminders/MiniAgenda';
 import { NAV } from '../../app/nav';
 import { api } from '../../lib/api';
 
@@ -60,26 +61,7 @@ export function HomePage() {
           </div>
         </Card>
 
-        <Card>
-          <CardHeader
-            icon={<CalendarDays className="size-5" />}
-            title="Agenda"
-            subtitle="Mini-agenda · Passo 6"
-          />
-          <div className="space-y-3 opacity-60">
-            {[
-              { t: '09:00', n: 'Daily do trabalho', c: '#6FE3FF' },
-              { t: '18:30', n: 'Treino', c: '#4DF5B8' },
-              { t: '21:00', n: 'Estudar TypeScript', c: '#FFD166' },
-            ].map((e) => (
-              <div key={e.t} className="flex items-center gap-3 text-sm">
-                <span className="w-12 text-muted tabular-nums">{e.t}</span>
-                <Dot color={e.c} />
-                <span>{e.n}</span>
-              </div>
-            ))}
-          </div>
-        </Card>
+        <MiniAgenda />
 
         <Card className="md:col-span-2 xl:col-span-1">
           <CardHeader

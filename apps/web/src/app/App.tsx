@@ -1,6 +1,6 @@
 import { lazy } from 'react';
 import { BrowserRouter, Link, Route, Routes } from 'react-router';
-import { CalendarDays, ChartColumn, GraduationCap, HeartPulse } from 'lucide-react';
+import { ChartColumn, GraduationCap, HeartPulse } from 'lucide-react';
 import { AppShell } from '../components/layout/AppShell';
 import { Card } from '../components/ui';
 import { HomePage } from '../features/home/HomePage';
@@ -15,6 +15,9 @@ const ProjectsPage = lazy(() =>
 );
 const FinancePage = lazy(() =>
   import('../features/finance/FinancePage').then((m) => ({ default: m.FinancePage })),
+);
+const AgendaPage = lazy(() =>
+  import('../features/reminders/AgendaPage').then((m) => ({ default: m.AgendaPage })),
 );
 const SettingsPage = lazy(() =>
   import('../features/settings/SettingsPage').then((m) => ({ default: m.SettingsPage })),
@@ -44,22 +47,7 @@ export function App() {
           <Route path="ideias" element={<IdeasPage />} />
           <Route path="projetos" element={<ProjectsPage />} />
           <Route path="financas" element={<FinancePage />} />
-          <Route
-            path="lembretes"
-            element={
-              <ComingSoon
-                title="Agenda"
-                subtitle="Lembretes, compromissos e avisos"
-                icon={CalendarDays}
-                step={6}
-                features={[
-                  'Recorrência diária, semanal e mensal',
-                  'Calendário mensal com bolinhas coloridas por categoria',
-                  'Mini-agenda na tela inicial',
-                ]}
-              />
-            }
-          />
+          <Route path="lembretes" element={<AgendaPage />} />
           <Route
             path="estudos"
             element={
