@@ -40,9 +40,9 @@ Todo passo termina com o app rodando, uma checagem manual no navegador (desktop 
 
 ## Passo 5: Atividades financeiras
 
-- [ ] Kanban com Ideias, Desenvolvimento e Ativas
-- [ ] Modal completo: detalhes, edição, timeline, observações, avisos com data
-- [ ] Registro automático de `status_change` e `edit` no histórico
+- [x] Kanban com Ideias, Desenvolvimento e Ativas
+- [x] Modal completo: detalhes, edição, timeline, observações, avisos com data
+- [x] Registro automático de `status_change` e `edit` no histórico
 
 ## Passo 6: Lembretes e agenda
 

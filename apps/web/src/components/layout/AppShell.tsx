@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router';
 import clsx from 'clsx';
 import { LayoutGrid } from 'lucide-react';
@@ -66,7 +66,10 @@ export function AppShell() {
       {/* ---------- Conteúdo ---------- */}
       <main className="px-4 pt-2 pb-32 md:pt-8 md:pr-8 md:pb-10 md:pl-76">
         <div className="mx-auto max-w-6xl">
-          <Outlet />
+          {/* Módulos são carregados sob demanda; o menu continua visível. */}
+          <Suspense fallback={<PageFallback />}>
+            <Outlet />
+          </Suspense>
         </div>
       </main>
 
@@ -152,6 +155,15 @@ export function AppShell() {
         </div>
         <ThemeSwitch className="mt-4" />
       </Modal>
+    </div>
+  );
+}
+
+function PageFallback() {
+  return (
+    <div aria-busy="true" aria-label="Carregando" className="space-y-6">
+      <div className="h-9 w-56 animate-pulse rounded-2xl bg-line" />
+      <div className="h-64 animate-pulse rounded-3xl shadow-neu-inset" />
     </div>
   );
 }

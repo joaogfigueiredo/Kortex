@@ -1,12 +1,24 @@
+import { lazy } from 'react';
 import { BrowserRouter, Link, Route, Routes } from 'react-router';
-import { CalendarDays, ChartColumn, GraduationCap, HeartPulse, Wallet } from 'lucide-react';
+import { CalendarDays, ChartColumn, GraduationCap, HeartPulse } from 'lucide-react';
 import { AppShell } from '../components/layout/AppShell';
 import { Card } from '../components/ui';
 import { HomePage } from '../features/home/HomePage';
-import { IdeasPage } from '../features/ideas/IdeasPage';
-import { ProjectsPage } from '../features/projects/ProjectsPage';
-import { SettingsPage } from '../features/settings/SettingsPage';
 import { ComingSoon } from '../features/placeholder/ComingSoon';
+
+// Módulos carregados sob demanda: o app abre rápido no celular.
+const IdeasPage = lazy(() =>
+  import('../features/ideas/IdeasPage').then((m) => ({ default: m.IdeasPage })),
+);
+const ProjectsPage = lazy(() =>
+  import('../features/projects/ProjectsPage').then((m) => ({ default: m.ProjectsPage })),
+);
+const FinancePage = lazy(() =>
+  import('../features/finance/FinancePage').then((m) => ({ default: m.FinancePage })),
+);
+const SettingsPage = lazy(() =>
+  import('../features/settings/SettingsPage').then((m) => ({ default: m.SettingsPage })),
+);
 
 function NotFound() {
   return (
@@ -31,22 +43,7 @@ export function App() {
           <Route index element={<HomePage />} />
           <Route path="ideias" element={<IdeasPage />} />
           <Route path="projetos" element={<ProjectsPage />} />
-          <Route
-            path="financas"
-            element={
-              <ComingSoon
-                title="Atividades financeiras"
-                subtitle="Fontes de renda e ideias de monetização"
-                icon={Wallet}
-                step={5}
-                features={[
-                  'Kanban: Ideias → Desenvolvimento → Ativas',
-                  'Modal completo com histórico, observações e avisos',
-                  'Renda esperada x real por atividade',
-                ]}
-              />
-            }
-          />
+          <Route path="financas" element={<FinancePage />} />
           <Route
             path="lembretes"
             element={
