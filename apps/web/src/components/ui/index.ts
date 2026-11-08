@@ -8,3 +8,4 @@ export * from './SearchField';
 export * from './Segmented';
 export * from './Toaster';
 export * from './Toggle';
+export * from './WeekdayPicker';

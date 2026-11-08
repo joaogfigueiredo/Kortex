@@ -2,14 +2,22 @@ import { useEffect, useState, type FormEvent } from 'react';
 import clsx from 'clsx';
 import { Repeat, Trash2 } from 'lucide-react';
 import {
-  ALL_WEEKDAYS,
   REMINDER_KIND,
   REMINDER_KIND_LABEL,
   type Recurrence,
   type ReminderKind,
 } from '@kortex/shared';
-import { Button, Field, Input, Modal, Segmented, Textarea, Toggle } from '../../components/ui';
-import { WEEKDAY_NAME, WEEKDAY_SHORT, longDayLabel, weekdayOfStr } from '../../lib/dates';
+import {
+  Button,
+  Field,
+  Input,
+  Modal,
+  Segmented,
+  Textarea,
+  Toggle,
+  WeekdayPicker,
+} from '../../components/ui';
+import { longDayLabel, weekdayOfStr } from '../../lib/dates';
 import { toast } from '../../stores/toast';
 import { useCategories, useReminder, useReminderMutations } from './api';
 import { KIND_ICON, NO_CATEGORY_COLOR } from './OccurrenceItem';
@@ -77,10 +85,6 @@ export function ReminderModal({
   }, [openKey]); // reset intencional só ao abrir outro item / quando o item carrega
 
   const busy = create.isPending || update.isPending || remove.isPending;
-
-  function toggleWeekday(d: number) {
-    setWeekdays((m) => m ^ (1 << d));
-  }
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -278,55 +282,7 @@ export function ReminderModal({
               options={RECURRENCE_OPTIONS}
             />
             {recurrence === 'weekly' && (
-              <div>
-                <div
-                  role="group"
-                  aria-label="Dias da semana"
-                  className="flex justify-between gap-1.5"
-                >
-                  {[0, 1, 2, 3, 4, 5, 6].map((d) => {
-                    const on = (weekdays & (1 << d)) !== 0;
-                    return (
-                      <button
-                        key={d}
-                        type="button"
-                        aria-pressed={on}
-                        aria-label={WEEKDAY_NAME[d]}
-                        title={WEEKDAY_NAME[d]}
-                        onClick={() => toggleWeekday(d)}
-                        className={clsx(
-                          'grid size-9 place-items-center rounded-full text-xs font-semibold transition-all',
-                          on
-                            ? 'bg-accent text-on-accent shadow-glow'
-                            : 'text-muted shadow-neu-sm hover:text-fg',
-                        )}
-                      >
-                        {WEEKDAY_SHORT[d]}
-                      </button>
-                    );
-                  })}
-                </div>
-                <div className="mt-2 flex gap-2 px-1 text-xs">
-                  <button
-                    type="button"
-                    className="text-muted hover:text-accent-ink"
-                    onClick={() => setWeekdays(0b0111110)}
-                  >
-                    Dias úteis
-                  </button>
-                  <span className="text-muted">·</span>
-                  <button
-                    type="button"
-                    className="text-muted hover:text-accent-ink"
-                    onClick={() => setWeekdays(ALL_WEEKDAYS)}
-                  >
-                    Todos
-                  </button>
-                </div>
-                {errors.weekdays && (
-                  <p className="mt-1 px-1 text-xs text-danger">{errors.weekdays}</p>
-                )}
-              </div>
+              <WeekdayPicker value={weekdays} onChange={setWeekdays} error={errors.weekdays} />
             )}
             {recurrence !== 'none' && (
               <Input

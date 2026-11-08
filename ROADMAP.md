@@ -58,8 +58,8 @@ Todo passo termina com o app rodando, uma checagem manual no navegador (desktop 
 
 ## Passo 8: Saúde (treinos e dieta)
 
-- [ ] Registro rápido de treinos
-- [ ] Plano de refeições e check diário (feito / parcial / pulado)
+- [x] Registro rápido de treinos
+- [x] Plano de refeições e check diário (feito / parcial / pulado)
 
 ## Passo 9: Home e metas diárias
 

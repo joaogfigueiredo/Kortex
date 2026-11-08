@@ -10,7 +10,7 @@ import { nextLevel } from './meta';
 import { SessionModal } from './SessionModal';
 import { SubjectCard } from './SubjectCard';
 import { SubjectModal, type SubjectModalState } from './SubjectModal';
-import { WeekBars } from './WeekBars';
+import { WeekBars } from '../../components/charts/WeekBars';
 
 export function StudiesPage() {
   const { data: subjects = [], isLoading, isError } = useSubjects();
@@ -87,7 +87,11 @@ export function StudiesPage() {
           </div>
           <Card className="p-5">
             <h2 className="mb-5 text-sm font-semibold">Tempo de estudo por dia</h2>
-            <WeekBars days={summary.last7} title="Tempo de estudo por dia, últimos 7 dias" />
+            <WeekBars
+              days={summary.last7.map((d) => ({ date: d.date, value: d.sec }))}
+              title="Tempo de estudo por dia, últimos 7 dias"
+              format={formatDuration}
+            />
           </Card>
         </section>
       )}

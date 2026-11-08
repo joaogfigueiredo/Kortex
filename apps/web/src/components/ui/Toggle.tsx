@@ -7,9 +7,18 @@ export interface ToggleProps {
   label?: ReactNode;
   description?: ReactNode;
   disabled?: boolean;
+  /** Nome acessível quando não há `label` visível. */
+  ariaLabel?: string;
 }
 
-export function Toggle({ checked, onChange, label, description, disabled }: ToggleProps) {
+export function Toggle({
+  checked,
+  onChange,
+  label,
+  description,
+  disabled,
+  ariaLabel,
+}: ToggleProps) {
   const id = useId();
   const sw = (
     <button
@@ -17,6 +26,7 @@ export function Toggle({ checked, onChange, label, description, disabled }: Togg
       type="button"
       role="switch"
       aria-checked={checked}
+      aria-label={label ? undefined : ariaLabel}
       disabled={disabled}
       onClick={() => onChange(!checked)}
       className="relative h-7 w-12 shrink-0 rounded-full bg-bg shadow-neu-inset-sm transition-opacity disabled:opacity-50"

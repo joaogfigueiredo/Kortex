@@ -1,6 +1,6 @@
 import { lazy } from 'react';
 import { BrowserRouter, Link, Route, Routes } from 'react-router';
-import { ChartColumn, HeartPulse } from 'lucide-react';
+import { ChartColumn } from 'lucide-react';
 import { AppShell } from '../components/layout/AppShell';
 import { Card } from '../components/ui';
 import { HomePage } from '../features/home/HomePage';
@@ -21,6 +21,9 @@ const AgendaPage = lazy(() =>
 );
 const StudiesPage = lazy(() =>
   import('../features/studies/StudiesPage').then((m) => ({ default: m.StudiesPage })),
+);
+const HealthPage = lazy(() =>
+  import('../features/health/HealthPage').then((m) => ({ default: m.HealthPage })),
 );
 const SettingsPage = lazy(() =>
   import('../features/settings/SettingsPage').then((m) => ({ default: m.SettingsPage })),
@@ -52,18 +55,7 @@ export function App() {
           <Route path="financas" element={<FinancePage />} />
           <Route path="lembretes" element={<AgendaPage />} />
           <Route path="estudos" element={<StudiesPage />} />
-          <Route
-            path="saude"
-            element={
-              <ComingSoon
-                title="Saúde"
-                subtitle="Treinos e dieta"
-                icon={HeartPulse}
-                step={8}
-                features={['Registro rápido de treinos', 'Plano de refeições com check diário']}
-              />
-            }
-          />
+          <Route path="saude" element={<HealthPage />} />
           <Route
             path="dashboard"
             element={

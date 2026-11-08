@@ -204,6 +204,8 @@ export interface WellnessDayStats {
   mealsPlanned: number;
   mealsDone: number;
   mealsPartial: number;
+  /** Refeições com qualquer marcação (inclui puladas). */
+  mealsLogged: number;
   /** 0–100, feita = 1 e parcial = 0,5; null quando não há refeição prevista. */
   dietPct: number | null;
 }

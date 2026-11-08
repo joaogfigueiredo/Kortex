@@ -165,13 +165,13 @@ export function wellnessSummary(db: DB, today: string): WellnessSummary {
       mealsPlanned: planned.length,
       mealsDone: done,
       mealsPartial: partial,
+      mealsLogged: dayLogs.length,
       dietPct: dietPct(planned.length, done, partial),
     };
   });
 
   // Média só dos dias com plano E alguma marcação: dias sem registro não viram "0%".
-  const loggedDates = new Set(logs.map((l) => l.date));
-  const logged = last7.filter((d) => d.dietPct != null && loggedDates.has(d.date));
+  const logged = last7.filter((d) => d.dietPct != null && d.mealsLogged > 0);
   return {
     last7,
     weekWorkouts: wk.length,
