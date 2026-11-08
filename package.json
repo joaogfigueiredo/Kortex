@@ -1,0 +1,40 @@
+{
+  "name": "kortex",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Kortex — sistema de organização e produtividade pessoal",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "concurrently -n api,web -c cyan,magenta \"npm run dev -w @kortex/api\" \"npm run dev -w @kortex/web\"",
+    "build": "npm run build -w @kortex/web",
+    "start": "npm run start -w @kortex/api",
+    "db:generate": "npm run db:generate -w @kortex/api",
+    "db:migrate": "npm run db:migrate -w @kortex/api",
+    "db:seed": "npm run db:seed -w @kortex/api",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "concurrently": "^10.0.7",
+    "eslint": "^10.14.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.10",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.1"
+  },
+  "allowScripts": {
+    "esbuild@0.18.20": true,
+    "esbuild@0.25.12": true,
+    "esbuild@0.28.2": true
+  }
+}

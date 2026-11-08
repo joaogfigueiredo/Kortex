@@ -1,0 +1,22 @@
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+
+# Dados locais (cada instalação tem os seus)
+data/*
+!data/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+
+# SO / editores
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
