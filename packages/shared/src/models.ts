@@ -302,4 +302,27 @@ export interface DashboardData {
   };
 }
 
+/** Formato do arquivo de backup/exportação (API e scripts Python usam o mesmo). */
+export interface BackupFile {
+  format: 'kortex-backup';
+  version: 1;
+  exportedAt: string;
+  /** Nº de migrations aplicadas no banco de origem. */
+  schemaVersion: number;
+  /** Linhas por tabela, com os nomes de coluna do banco (snake_case). */
+  tables: Record<string, Record<string, unknown>[]>;
+}
+
+export interface BackupInfo {
+  name: string;
+  size: number;
+  createdAt: string;
+}
+
+export interface ImportResult {
+  /** Backup .db feito automaticamente antes de substituir os dados. */
+  safetyBackup: string;
+  counts: Record<string, number>;
+}
+
 export const PRIORITY_LABEL: Record<number, string> = { 1: 'Alta', 2: 'Média', 3: 'Baixa' };

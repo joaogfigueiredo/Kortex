@@ -13,6 +13,8 @@ import { studiesRoutes } from './modules/studies/routes';
 import { mealsRoutes, wellnessRoutes, workoutsRoutes } from './modules/health/routes';
 import { goalsRoutes } from './modules/goals/routes';
 import { dashboardRoutes } from './modules/dashboard/routes';
+import { backupRoutes } from './modules/backup/routes';
+import { BACKUP_DIR } from './env';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -23,9 +25,11 @@ declare module 'fastify' {
 export interface AppOptions {
   db: DB;
   logger?: boolean;
+  /** Pasta dos backups .db (padrão: data/backups). */
+  backupDir?: string;
 }
 
-export async function buildApp({ db, logger = true }: AppOptions) {
+export async function buildApp({ db, logger = true, backupDir = BACKUP_DIR }: AppOptions) {
   const app = Fastify({
     logger: logger && {
       transport: {
@@ -56,7 +60,7 @@ export async function buildApp({ db, logger = true }: AppOptions) {
   await app.register(wellnessRoutes, { prefix: '/api/wellness' });
   await app.register(goalsRoutes, { prefix: '/api/goals' });
   await app.register(dashboardRoutes, { prefix: '/api/dashboard' });
-  // Próximo (Passo 12): export/backup
+  await app.register(backupRoutes, { prefix: '/api', backupDir });
 
   return app;
 }

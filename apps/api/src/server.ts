@@ -2,7 +2,8 @@ import { buildApp } from './app';
 import { openDatabase } from './db/client';
 import { runMigrations } from './db/migrate';
 import { seed } from './db/seed';
-import { DB_PATH, HOST, PORT } from './env';
+import { AUTO_BACKUP, BACKUP_DIR, DB_PATH, HOST, PORT } from './env';
+import { autoBackup } from './modules/backup/service';
 
 const { db, sqlite } = openDatabase();
 runMigrations(db);
@@ -21,6 +22,14 @@ process.on('SIGTERM', shutdown);
 try {
   await app.listen({ port: PORT, host: HOST });
   app.log.info(`Banco: ${DB_PATH}`);
+  if (AUTO_BACKUP) {
+    try {
+      const b = autoBackup(sqlite, BACKUP_DIR);
+      if (b) app.log.info(`Backup automático: ${b.name}`);
+    } catch (e) {
+      app.log.warn({ err: e }, 'Backup automático falhou (o app continua normalmente)');
+    }
+  }
 } catch (err) {
   app.log.error(err);
   process.exit(1);
