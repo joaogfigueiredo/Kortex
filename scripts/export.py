@@ -76,7 +76,7 @@ def main(argv: list[str] | None = None) -> int:
         conn.close()
 
     total = sum(counts.values())
-    print(f"✔ Exportado: {out} ({human_size(out.stat().st_size)}, {total} registros em {len(counts)} tabelas)")
+    print(f"[ok] Exportado: {out} ({human_size(out.stat().st_size)}, {total} registros em {len(counts)} tabelas)")
     for t, n in counts.items():
         if n:
             print(f"  {t}: {n}")

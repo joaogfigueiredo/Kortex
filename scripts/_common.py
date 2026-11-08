@@ -10,9 +10,16 @@ from __future__ import annotations
 import json
 import os
 import sqlite3
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+# Saída em UTF-8 mesmo quando redirecionada (no Windows, um pipe usa cp1252 e
+# caracteres fora dele derrubariam o script). "replace" garante que nunca quebra.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
 
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_DB = Path(os.environ.get("KORTEX_DB_PATH", ROOT / "data" / "kortex.db"))

@@ -134,7 +134,7 @@ def main(argv: list[str] | None = None) -> int:
         ap.error("use um arquivo .json ou .db")
 
     if app_running():
-        print("⚠ O Kortex parece estar rodando (porta 3333). Recomendo parar o app antes de restaurar.")
+        print("[aviso] O Kortex parece estar rodando (porta 3333). Recomendo parar o app antes de restaurar.")
     if not args.yes:
         ans = input(f"Isto vai SUBSTITUIR todos os dados de {args.db} por {args.source.name}. Continuar? [s/N] ")
         if ans.strip().lower() not in ("s", "sim", "y", "yes"):
@@ -144,16 +144,16 @@ def main(argv: list[str] | None = None) -> int:
     conn = connect(args.db)
     try:
         safety = backup_db(conn, default_backup_dir(args.db), "pre-restore")
-        print(f"✔ Backup de segurança: {safety}")
+        print(f"[ok] Backup de segurança: {safety}")
         try:
             counts = restore_json(conn, load_backup(args.source)) if kind == ".json" else restore_db(conn, args.source)
         except RestoreError as e:
-            print(f"✘ {e}\n  Nada foi alterado.")
+            print(f"[erro] {e}\n  Nada foi alterado.")
             return 2
     finally:
         conn.close()
 
-    print(f"✔ Restaurado de {args.source.name}: {sum(counts.values())} registros")
+    print(f"[ok] Restaurado de {args.source.name}: {sum(counts.values())} registros")
     for t, n in counts.items():
         if n:
             print(f"  {t}: {n}")

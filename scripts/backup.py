@@ -43,7 +43,7 @@ def main(argv: list[str] | None = None) -> int:
         dest = backup_db(conn, out, args.label)
     finally:
         conn.close()
-    print(f"✔ Backup criado: {dest} ({human_size(dest.stat().st_size)})")
+    print(f"[ok] Backup criado: {dest} ({human_size(dest.stat().st_size)})")
 
     if args.keep > 0:
         for f in rotate(out, args.label, args.keep):
