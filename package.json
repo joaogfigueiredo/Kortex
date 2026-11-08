@@ -21,7 +21,11 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "backup": "python scripts/backup.py",
+    "export": "python scripts/export.py",
+    "restore": "python scripts/restore.py",
+    "test:py": "python -m unittest discover -s scripts/tests"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

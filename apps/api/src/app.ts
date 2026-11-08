@@ -14,7 +14,8 @@ import { mealsRoutes, wellnessRoutes, workoutsRoutes } from './modules/health/ro
 import { goalsRoutes } from './modules/goals/routes';
 import { dashboardRoutes } from './modules/dashboard/routes';
 import { backupRoutes } from './modules/backup/routes';
-import { BACKUP_DIR } from './env';
+import { BACKUP_DIR, DB_PATH } from './env';
+import path from 'node:path';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -45,7 +46,13 @@ export async function buildApp({ db, logger = true, backupDir = BACKUP_DIR }: Ap
 
   app.get('/api/health', async () => {
     const row = db.get<{ v: string }>(sql`select sqlite_version() as v`);
-    return { status: 'ok', sqlite: row.v, time: new Date().toISOString() };
+    // `db` (nome do arquivo) ajuda a confirmar qual banco está servindo esta instância.
+    return {
+      status: 'ok',
+      sqlite: row.v,
+      db: path.basename(DB_PATH),
+      time: new Date().toISOString(),
+    };
   });
 
   await app.register(settingsRoutes, { prefix: '/api/settings' });

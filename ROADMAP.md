@@ -79,10 +79,10 @@ Todo passo termina com o app rodando, uma checagem manual no navegador (desktop 
 
 ## Passo 12: Backup e exportação
 
-- [ ] `GET /api/export?format=json|csv` (download; o CSV vem em zip com uma tabela por arquivo)
-- [ ] Botão de exportar em Configurações
-- [ ] Python: `scripts/backup.py` (backup consistente e rotação), `export.py`, `restore.py`
-- [ ] Backup automático opcional ao iniciar
+- [x] `GET /api/export?format=json|csv` (download; o CSV vem em zip com uma tabela por arquivo)
+- [x] Botão de exportar em Configurações
+- [x] Python: `scripts/backup.py` (backup consistente e rotação), `export.py`, `restore.py`
+- [x] Backup automático opcional ao iniciar
 
 ## Passo 13: Mobile e distribuição
 

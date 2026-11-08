@@ -16,6 +16,7 @@ import {
 } from '../../components/ui';
 import { PageHeader } from '../../components/layout/PageHeader';
 import { ThemeSwitch } from '../../components/layout/ThemeSwitch';
+import { DataCard } from './DataCard';
 
 const PALETTE = [
   { name: 'Accent', hex: '#6FE3FF', use: 'Botões, ativos, seleção' },
@@ -33,7 +34,7 @@ export function SettingsPage() {
 
   return (
     <>
-      <PageHeader title="Configurações" subtitle="Aparência e preferências do Kortex" />
+      <PageHeader title="Configurações" subtitle="Aparência, dados e backup" />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
@@ -56,6 +57,8 @@ export function SettingsPage() {
             ))}
           </div>
         </Card>
+
+        <DataCard />
 
         {/* Vitrine do design system — útil para conferir os dois temas */}
         <Card>
