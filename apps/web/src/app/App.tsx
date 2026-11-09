@@ -1,8 +1,11 @@
-import { lazy } from 'react';
+import { lazy, useEffect, type ReactNode } from 'react';
 import { BrowserRouter, Link, Route, Routes } from 'react-router';
 import { AppShell } from '../components/layout/AppShell';
+import { Logo } from '../components/layout/Logo';
 import { Card } from '../components/ui';
+import { LockScreen } from '../features/auth/LockScreen';
 import { HomePage } from '../features/home/HomePage';
+import { useAuth } from '../stores/auth';
 
 // Módulos carregados sob demanda: o app abre rápido no celular.
 const IdeasPage = lazy(() =>
@@ -45,23 +48,47 @@ function NotFound() {
   );
 }
 
+/** Só mostra o app depois de saber se há PIN e se a sessão é válida. */
+function AuthGate({ children }: { children: ReactNode }) {
+  const phase = useAuth((s) => s.phase);
+  const refresh = useAuth((s) => s.refresh);
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
+
+  if (phase === 'locked') return <LockScreen />;
+  if (phase === 'loading')
+    return (
+      <div
+        className="grid min-h-dvh place-items-center bg-bg"
+        aria-busy="true"
+        aria-label="Carregando"
+      >
+        <Logo />
+      </div>
+    );
+  return <>{children}</>;
+}
+
 export function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<AppShell />}>
-          <Route index element={<HomePage />} />
-          <Route path="ideias" element={<IdeasPage />} />
-          <Route path="projetos" element={<ProjectsPage />} />
-          <Route path="financas" element={<FinancePage />} />
-          <Route path="lembretes" element={<AgendaPage />} />
-          <Route path="estudos" element={<StudiesPage />} />
-          <Route path="saude" element={<HealthPage />} />
-          <Route path="dashboard" element={<DashboardPage />} />
-          <Route path="configuracoes" element={<SettingsPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <AuthGate>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<AppShell />}>
+            <Route index element={<HomePage />} />
+            <Route path="ideias" element={<IdeasPage />} />
+            <Route path="projetos" element={<ProjectsPage />} />
+            <Route path="financas" element={<FinancePage />} />
+            <Route path="lembretes" element={<AgendaPage />} />
+            <Route path="estudos" element={<StudiesPage />} />
+            <Route path="saude" element={<HealthPage />} />
+            <Route path="dashboard" element={<DashboardPage />} />
+            <Route path="configuracoes" element={<SettingsPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthGate>
   );
 }

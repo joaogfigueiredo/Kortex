@@ -86,10 +86,10 @@ Todo passo termina com o app rodando, uma checagem manual no navegador (desktop 
 
 ## Passo 13: Mobile e distribuição
 
-- [ ] PWA instalável
-- [ ] PIN opcional para acesso remoto
-- [ ] Documentar o acesso via rede local ou Tailscale
-- [ ] `npm start` servindo um build único, README de instalação para os colegas
+- [x] PWA instalável
+- [x] PIN opcional para acesso remoto
+- [x] Documentar o acesso via rede local ou Tailscale
+- [x] `npm start` servindo um build único, README de instalação para os colegas
 
 ## Passo 14: Polimento
 

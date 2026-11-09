@@ -18,7 +18,8 @@ import { backupRoutes } from './modules/backup/routes';
 import { authRoutes } from './modules/auth/routes';
 import { createLimiter, isAuthenticated, pinEnabled } from './modules/auth/service';
 import { networkInfo } from './modules/network/service';
-import { BACKUP_DIR, DB_PATH, HOST, PORT, SERVE_WEB, WEB_DIR } from './env';
+import { hostAllowed, isCrossSite } from './plugins/request-guard';
+import { ALLOWED_HOSTS, BACKUP_DIR, DB_PATH, HOST, PORT, SERVE_WEB, WEB_DIR } from './env';
 import path from 'node:path';
 
 declare module 'fastify' {
@@ -36,6 +37,8 @@ export interface AppOptions {
   webDir?: string | null;
   /** Endereço/porta em que o servidor escuta (informativo, para /api/network). */
   network?: { host: string; port: number };
+  /** Nomes de host extras aceitos (domínio próprio, "*.exemplo.com"). */
+  allowedHosts?: string[];
 }
 
 /** Rotas liberadas mesmo com PIN ativo (precisam existir para a tela de bloqueio). */
@@ -46,21 +49,13 @@ const PUBLIC_ROUTES = new Set([
   'POST /api/auth/logout',
 ]);
 
-/** A origem da requisição é a mesma do servidor? (barra CSRF e páginas de terceiros) */
-function sameOrigin(origin: string, host: string | undefined) {
-  try {
-    return new URL(origin).host === host;
-  } catch {
-    return false; // "null" e valores inválidos
-  }
-}
-
 export async function buildApp({
   db,
   logger = true,
   backupDir = BACKUP_DIR,
   webDir = SERVE_WEB ? WEB_DIR : null,
   network = { host: HOST, port: PORT },
+  allowedHosts = ALLOWED_HOSTS,
 }: AppOptions) {
   const serveWeb = !!webDir && fs.existsSync(path.join(webDir, 'index.html'));
   const limiter = createLimiter();
@@ -78,15 +73,24 @@ export async function buildApp({
 
   // O web é sempre servido pela mesma origem da API (proxy do Vite em dev, API em produção),
   // por isso NÃO há CORS: páginas de outros sites não conseguem ler as respostas.
+  // 1) Qualquer rota: só aceita nomes de host que o usuário realmente usaria (barra DNS rebinding).
+  app.addHook('onRequest', async (req, reply) => {
+    if (!hostAllowed(req.headers.host, allowedHosts)) {
+      req.log.warn({ host: req.headers.host }, 'Host recusado');
+      return reply.status(403).send({
+        error: `Endereço "${req.headers.host ?? ''}" não permitido. Se é um domínio seu, defina KORTEX_ALLOWED_HOSTS.`,
+        code: 'BAD_HOST',
+      });
+    }
+  });
+
+  // 2) API: pedidos que alteram dados só valem se vierem do próprio Kortex (barra CSRF) e,
+  //    com PIN ativo, só com sessão válida.
   app.addHook('onRequest', async (req, reply) => {
     const url = req.url.split('?')[0] ?? '';
     if (!url.startsWith('/api/')) return;
-    // Pedidos que alteram dados só valem se vierem do próprio Kortex (barra CSRF).
-    if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
-      const origin = req.headers.origin;
-      if (origin && !sameOrigin(origin, req.headers.host))
-        return reply.status(403).send({ error: 'Origem não permitida', code: 'BAD_ORIGIN' });
-    }
+    if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method) && isCrossSite(req.headers))
+      return reply.status(403).send({ error: 'Origem não permitida', code: 'BAD_ORIGIN' });
     if (PUBLIC_ROUTES.has(`${req.method} ${url}`)) return;
     if (pinEnabled(db) && !isAuthenticated(db, req))
       return reply.status(401).send({ error: 'Autenticação necessária', code: 'AUTH_REQUIRED' });

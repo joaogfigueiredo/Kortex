@@ -14,7 +14,7 @@
   "scripts": {
     "dev": "concurrently -n api,web -c cyan,magenta \"npm run dev -w @kortex/api\" \"npm run dev -w @kortex/web\"",
     "build": "npm run build -w @kortex/web",
-    "start": "npm run start -w @kortex/api",
+    "start": "node scripts/start.mjs",
     "db:generate": "npm run db:generate -w @kortex/api",
     "db:migrate": "npm run db:migrate -w @kortex/api",
     "db:seed": "npm run db:seed -w @kortex/api",
@@ -25,7 +25,10 @@
     "backup": "python scripts/backup.py",
     "export": "python scripts/export.py",
     "restore": "python scripts/restore.py",
-    "test:py": "python -m unittest discover -s scripts/tests"
+    "test:py": "python -m unittest discover -s scripts/tests",
+    "start:lan": "node scripts/start.mjs --lan",
+    "test:scripts": "node --test scripts/tests",
+    "reset-pin": "python scripts/reset_pin.py"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

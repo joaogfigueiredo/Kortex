@@ -21,6 +21,7 @@ sys.path.insert(0, str(SCRIPTS))
 
 import backup  # noqa: E402
 import export  # noqa: E402
+import reset_pin  # noqa: E402
 import restore  # noqa: E402
 from _common import export_dict  # noqa: E402
 
@@ -149,6 +150,25 @@ class ScriptsTest(unittest.TestCase):
         src = next(bk.glob("kortex-t-*.db"))
         self.assertEqual(restore.main([str(src), "--db", str(self.db), "--yes"]), 0)
         self.assertEqual(snapshot(self.db), before)
+
+    # ---------- reset_pin.py ----------
+    def test_reset_pin_remove_so_o_pin_e_preserva_os_dados(self):
+        conn = sqlite3.connect(self.db)
+        conn.executemany(
+            "INSERT INTO settings (key, value) VALUES (?, ?)",
+            [("pin_hash", "scrypt$x$y"), ("pin_numeric", "1"), ("session_secret", "abc"), ("theme", "dark")],
+        )
+        conn.commit()
+        conn.close()
+        before = snapshot(self.db)["ideas"]
+        self.assertEqual(reset_pin.main(["--db", str(self.db), "--yes"]), 0)
+        conn = sqlite3.connect(self.db)
+        keys = {r[0] for r in conn.execute("SELECT key FROM settings")}
+        conn.close()
+        self.assertEqual(keys, {"theme"})  # as demais configurações ficam
+        self.assertEqual(snapshot(self.db)["ideas"], before)
+        # segunda vez: já está sem PIN
+        self.assertEqual(reset_pin.main(["--db", str(self.db), "--yes"]), 0)
 
 
 if __name__ == "__main__":

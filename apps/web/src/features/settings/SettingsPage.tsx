@@ -16,7 +16,9 @@ import {
 } from '../../components/ui';
 import { PageHeader } from '../../components/layout/PageHeader';
 import { ThemeSwitch } from '../../components/layout/ThemeSwitch';
+import { AccessCard } from './AccessCard';
 import { DataCard } from './DataCard';
+import { SecurityCard } from './SecurityCard';
 
 const PALETTE = [
   { name: 'Accent', hex: '#6FE3FF', use: 'Botões, ativos, seleção' },
@@ -58,6 +60,8 @@ export function SettingsPage() {
           </div>
         </Card>
 
+        <SecurityCard />
+        <AccessCard />
         <DataCard />
 
         {/* Vitrine do design system — útil para conferir os dois temas */}

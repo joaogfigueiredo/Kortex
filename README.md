@@ -2,33 +2,58 @@
 
 Sistema pessoal de organização e produtividade: Kanbans de ideias, projetos e atividades financeiras, lembretes com calendário, estudos, saúde, metas diárias, Modo Foco e dashboard.
 
-**Local-first:** cada pessoa roda a própria instância, e os dados ficam num arquivo SQLite em `data/kortex.db`.
+**Local-first:** cada pessoa roda a própria instância, e os dados ficam num arquivo SQLite em `data/kortex.db`. Nada sai da sua máquina.
 
 ## Requisitos
 
 - Node.js 20+ (testado no 26)
-- Python 3.10+ (opcional, para os scripts de backup e exportação)
+- Python 3.10+ (opcional, só para os scripts de backup e exportação)
 
-## Instalação
+## Instalação e uso
 
 ```bash
 git clone https://github.com/joaogfigueiredo/Kortex.git
 cd Kortex
 npm install
-npm run dev        # web em http://localhost:5173 · API em http://localhost:3333
+npm start          # compila o app na primeira vez e abre em http://localhost:3333
 ```
 
-Para abrir no celular (mesma rede Wi-Fi), rode `npm run dev -w @kortex/web -- --host` junto com a API e acesse o IP da máquina na porta 5173. Acesso fora de casa e PIN entram no Passo 13.
+Na primeira execução o banco é criado, as migrations são aplicadas e entram dados de exemplo (categorias, metas e refeições).
+Nas próximas, o app só é recompilado se o código mudou.
 
-Na primeira execução, o banco é criado, as migrations são aplicadas e os dados de exemplo entram automaticamente.
+| Quero…                                    | Comando                                                                                         |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Usar o Kortex neste computador            | `npm start`                                                                                     |
+| Abrir também **no celular** (mesmo Wi-Fi) | `npm run start:lan` (o endereço aparece no terminal e em _Configurações → Acesso pelo celular_) |
+| Mudar a porta                             | `npm start -- --port 4000`                                                                      |
+| Desenvolver (hot reload)                  | `npm run dev` → web em `localhost:5173`, API em `localhost:3333`                                |
+
+> **Windows:** na primeira vez que usar `start:lan`, o firewall pergunta se o Node pode receber conexões. Permita em **redes privadas**.
+
+### No celular
+
+1. **Crie um PIN** em _Configurações → Segurança_ antes de abrir o Kortex pela rede (sem PIN, qualquer pessoa na sua rede entra).
+2. Abra o endereço mostrado em _Acesso pelo celular_.
+3. Para **instalar como app** (ícone na tela inicial, tela cheia, abre sem internet), o navegador exige **HTTPS**. A forma mais simples é o Tailscale, que ainda dá acesso de qualquer lugar: veja o [guia de acesso remoto](docs/ACESSO-REMOTO.md).
+
+## Segurança
+
+- **PIN opcional** (4 a 64 caracteres), guardado só como hash `scrypt`. A sessão fica num cookie `HttpOnly` por 30 dias em cada aparelho. Trocar o PIN desconecta os outros aparelhos.
+- Após 5 PINs errados seguidos o login trava (30 s, dobrando até 15 min).
+- Sem CORS, com checagem de origem (`Sec-Fetch-Site`) e lista de endereços aceitos (barra _DNS rebinding_): páginas de outros sites não conseguem ler nem alterar seus dados.
+- Por padrão o servidor escuta só em `127.0.0.1` (este computador). A rede só é aberta com `start:lan`, e o terminal avisa se estiver aberto **sem PIN**.
+- Esqueceu o PIN? Rode `npm run reset-pin`: ele remove só o PIN e as sessões (seus dados continuam intactos) e você cria outro em _Configurações → Segurança_.
 
 ## Scripts
 
 | Comando                        | O que faz                                                        |
 | ------------------------------ | ---------------------------------------------------------------- |
+| `npm start`                    | Compila (se preciso) e sobe tudo em `http://localhost:3333`      |
+| `npm run start:lan`            | Igual, mas acessível pela rede local (celular)                   |
 | `npm run dev`                  | API e web com hot reload                                         |
-| `npm start`                    | Sobe a API                                                       |
 | `npm test`                     | Testes (Vitest)                                                  |
+| `npm run test:py`              | Testes dos scripts Python                                        |
+| `npm run test:scripts`         | Testes do launcher (`node --test`)                               |
 | `npm run typecheck`            | Checagem de tipos em todos os pacotes                            |
 | `npm run db:generate`          | Gera uma migration depois de alterar `apps/api/src/db/schema.ts` |
 | `npm run db:migrate`           | Aplica as migrations                                             |
@@ -36,22 +61,24 @@ Na primeira execução, o banco é criado, as migrations são aplicadas e os dad
 | `npm run backup`               | Backup `.db` em `data/backups` (com rotação)                     |
 | `npm run export`               | Exporta tudo para JSON (`-- --format csv` para CSV em .zip)      |
 | `npm run restore -- <arquivo>` | Restaura de um `.json` ou `.db` (faz cópia de segurança antes)   |
-| `npm run test:py`              | Testes dos scripts Python                                        |
+| `npm run reset-pin`            | Remove o PIN esquecido (sem apagar dados)                        |
 
 ## Variáveis de ambiente (opcionais)
 
-| Variável         | Padrão                                                            |
-| ---------------- | ----------------------------------------------------------------- |
-| `PORT`           | `3333`                                                            |
-| `HOST`           | `127.0.0.1` (use `0.0.0.0` para abrir pelo celular na rede local) |
-| `KORTEX_DB_PATH` | `data/kortex.db`                                                  |
+| Variável               | Padrão                                                                                                                                       |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PORT`                 | `3333`                                                                                                                                       |
+| `HOST`                 | `127.0.0.1` (só este computador). `start:lan` usa `0.0.0.0`                                                                                  |
+| `KORTEX_DB_PATH`       | `data/kortex.db`                                                                                                                             |
+| `KORTEX_BACKUP_DIR`    | `data/backups`                                                                                                                               |
+| `KORTEX_AUTO_BACKUP`   | ligado; `0` desativa o backup automático ao iniciar                                                                                          |
+| `KORTEX_ALLOWED_HOSTS` | domínios extras aceitos, ex.: `kortex.minhacasa.com,*.exemplo.com`. Já valem: `localhost`, IPs, `*.ts.net`, `*.local` e o nome do computador |
 
 ## Backup e exportação
 
 Seus dados ficam só na sua máquina, em `data/kortex.db`. Para não perder nada:
 
-- **Automático:** ao iniciar, o app faz 1 backup por dia em `data/backups/` e guarda os 7 mais recentes
-  (`KORTEX_AUTO_BACKUP=0` desativa, `KORTEX_BACKUP_DIR` muda a pasta).
+- **Automático:** ao iniciar, o app faz 1 backup por dia em `data/backups/` e guarda os 7 mais recentes.
 - **No app:** _Configurações → Dados e backup_ para exportar **JSON** (restaurável) ou **CSV** (.zip, abre no Excel),
   fazer backup agora, baixar backups e **restaurar** de um JSON.
 - **Pelo terminal (Python 3.10+, sem dependências):**
@@ -66,8 +93,19 @@ Seus dados ficam só na sua máquina, em `data/kortex.db`. Para não perder nada
 
 Dica: copie `data/backups` para um pendrive ou pasta na nuvem de vez em quando.
 
+## Atualizar
+
+```bash
+git pull
+npm install
+npm start          # recompila sozinho e aplica migrations novas ao banco existente
+```
+
+Seus dados em `data/` não são tocados pelo `git pull` (a pasta é ignorada pelo git).
+
 ## Documentação
 
+- [Acesso remoto, HTTPS e instalação como app](docs/ACESSO-REMOTO.md)
 - [Roadmap](ROADMAP.md)
 - [Arquitetura](docs/ARCHITECTURE.md)
 - [Schema SQL](docs/DATABASE.sql)

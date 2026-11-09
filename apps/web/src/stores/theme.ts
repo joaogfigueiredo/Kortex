@@ -62,10 +62,16 @@ export function initTheme() {
     if (mode === 'system') setMode('system', { persist: false });
   });
 
+  syncThemeFromServer();
+}
+
+/** Lê o tema salvo no banco (chamar também depois de desbloquear com o PIN). */
+export function syncThemeFromServer() {
   api
     .get<{ theme?: ThemeMode }>('/settings')
     .then(({ theme }) => {
-      if (theme && theme !== useTheme.getState().mode) setMode(theme, { persist: false });
+      if (theme && theme !== useTheme.getState().mode)
+        useTheme.getState().setMode(theme, { persist: false });
     })
     .catch(() => {});
 }
