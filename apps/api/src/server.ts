@@ -2,7 +2,9 @@ import { buildApp } from './app';
 import { openDatabase } from './db/client';
 import { runMigrations } from './db/migrate';
 import { seed } from './db/seed';
-import { AUTO_BACKUP, BACKUP_DIR, DB_PATH, HOST, PORT } from './env';
+import { AUTO_BACKUP, BACKUP_DIR, DB_PATH, HOST, PORT, SERVE_WEB } from './env';
+import { pinEnabled } from './modules/auth/service';
+import { networkInfo } from './modules/network/service';
 import { autoBackup } from './modules/backup/service';
 
 const { db, sqlite } = openDatabase();
@@ -22,6 +24,13 @@ process.on('SIGTERM', shutdown);
 try {
   await app.listen({ port: PORT, host: HOST });
   app.log.info(`Banco: ${DB_PATH}`);
+  const net = networkInfo(HOST, PORT, pinEnabled(db));
+  if (SERVE_WEB) app.log.info(`Abra no navegador: http://localhost:${PORT}`);
+  if (net.exposed) {
+    for (const u of net.urls) app.log.info(`Na rede local: ${u}`);
+    if (!net.pinEnabled)
+      app.log.warn('Servidor acessível pela rede SEM PIN. Defina um em Configurações → Segurança.');
+  }
   if (AUTO_BACKUP) {
     try {
       const b = autoBackup(sqlite, BACKUP_DIR);

@@ -382,3 +382,10 @@ export type MealPlanCreate = z.infer<typeof mealPlanCreate>;
 export type MealPlanUpdate = z.infer<typeof mealPlanUpdate>;
 export type DailyGoalCreate = z.infer<typeof dailyGoalCreate>;
 export type DailyGoalUpdate = z.infer<typeof dailyGoalUpdate>;
+
+// ---------- Autenticação por PIN (opcional) ----------
+const pinText = z.string().min(4, 'Mínimo de 4 caracteres').max(64, 'Máximo de 64 caracteres');
+export const loginBody = z.object({ pin: z.string().min(1).max(64) });
+/** Define ou troca o PIN. `currentPin` é obrigatório quando já existe um PIN. */
+export const pinSetBody = z.object({ pin: pinText, currentPin: z.string().max(64).optional() });
+export const pinRemoveBody = z.object({ currentPin: z.string().min(1).max(64) });

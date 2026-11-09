@@ -12,6 +12,10 @@ export const BACKUP_DIR =
 /** Backup automático ao iniciar (1x por dia, guarda os 7 mais recentes). Desative com 0. */
 export const AUTO_BACKUP = process.env.KORTEX_AUTO_BACKUP !== '0';
 
+/** Web já compilado (apps/web/dist). Servido pela própria API em produção (`npm start`). */
+export const WEB_DIR = process.env.KORTEX_WEB_DIR ?? path.join(ROOT_DIR, 'apps', 'web', 'dist');
+export const SERVE_WEB = process.env.NODE_ENV === 'production';
+
 export const PORT = Number(process.env.PORT ?? 3333);
 /** 127.0.0.1 por padrão; use HOST=0.0.0.0 para acessar pelo celular na rede local. */
 export const HOST = process.env.HOST ?? '127.0.0.1';

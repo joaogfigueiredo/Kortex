@@ -325,4 +325,22 @@ export interface ImportResult {
   counts: Record<string, number>;
 }
 
+export interface AuthStatus {
+  pinEnabled: boolean;
+  /** O PIN é só números? (a tela de bloqueio usa o teclado numérico) */
+  numeric: boolean;
+  authenticated: boolean;
+}
+
+export interface NetworkInfo {
+  /** Endereço em que o servidor escuta (127.0.0.1 = só esta máquina). */
+  host: string;
+  port: number;
+  /** Acessível por outros dispositivos da rede? */
+  exposed: boolean;
+  pinEnabled: boolean;
+  /** Endereços para digitar no celular (vazio se não exposto). */
+  urls: string[];
+}
+
 export const PRIORITY_LABEL: Record<number, string> = { 1: 'Alta', 2: 'Média', 3: 'Baixa' };

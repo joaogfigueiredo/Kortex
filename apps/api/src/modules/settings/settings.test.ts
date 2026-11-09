@@ -3,17 +3,20 @@ import type { FastifyInstance } from 'fastify';
 import { openDatabase } from '../../db/client';
 import { runMigrations } from '../../db/migrate';
 import { seed } from '../../db/seed';
-import { settings } from '../../db/schema';
 import { buildApp } from '../../app';
+import { COOKIE_NAME, makeToken, setPin } from '../auth/service';
 
 let app: FastifyInstance;
 let close: () => void;
+/** Sessão de quem já digitou o PIN (com PIN ativo, a API exige o cookie). */
+let headers: { cookie: string };
 
 beforeEach(async () => {
   const { db, sqlite } = openDatabase(':memory:');
   runMigrations(db);
   seed(db);
-  db.insert(settings).values({ key: 'pin_hash', value: 'segredo' }).run();
+  await setPin(db, '123456'); // cria pin_hash + session_secret de verdade
+  headers = { cookie: `${COOKIE_NAME}=${makeToken(db)}` };
   app = await buildApp({ db, logger: false });
   close = () => sqlite.close();
 });
@@ -23,10 +26,10 @@ afterEach(async () => {
 });
 
 describe('/api/settings', () => {
-  it('lista só chaves públicas', async () => {
-    const body = (await app.inject('/api/settings')).json();
+  it('lista só chaves públicas (nunca o hash do PIN nem o segredo da sessão)', async () => {
+    const body = (await app.inject({ url: '/api/settings', headers })).json();
     expect(body).toMatchObject({ theme: 'system', locale: 'pt-BR' });
-    expect(body).not.toHaveProperty('pin_hash');
+    expect(Object.keys(body).sort()).toEqual(['locale', 'theme', 'week_start']);
   });
 
   it('atualiza o tema', async () => {
@@ -34,23 +37,28 @@ describe('/api/settings', () => {
       method: 'PUT',
       url: '/api/settings/theme',
       payload: { value: 'dark' },
+      headers,
     });
     expect(res.statusCode).toBe(200);
-    expect((await app.inject('/api/settings')).json().theme).toBe('dark');
+    expect((await app.inject({ url: '/api/settings', headers })).json().theme).toBe('dark');
   });
 
-  it('valida valor e chave', async () => {
+  it('valida valor e recusa chaves internas (pin_hash, session_secret)', async () => {
     const bad = await app.inject({
       method: 'PUT',
       url: '/api/settings/theme',
       payload: { value: 'neon' },
+      headers,
     });
     expect(bad.statusCode).toBe(400);
-    const pin = await app.inject({
-      method: 'PUT',
-      url: '/api/settings/pin_hash',
-      payload: { value: 'x' },
-    });
-    expect(pin.statusCode).toBe(404);
+    for (const key of ['pin_hash', 'session_secret', 'pin_numeric']) {
+      const r = await app.inject({
+        method: 'PUT',
+        url: `/api/settings/${key}`,
+        payload: { value: 'x' },
+        headers,
+      });
+      expect(r.statusCode).toBe(404);
+    }
   });
 });

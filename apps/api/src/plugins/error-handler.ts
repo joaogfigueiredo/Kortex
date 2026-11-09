@@ -14,7 +14,7 @@ export class HttpError extends Error {
 
 export const notFound = (what = 'Recurso') => new HttpError(404, `${what} não encontrado`);
 
-export function registerErrorHandler(app: FastifyInstance) {
+export function registerErrorHandler(app: FastifyInstance, opts: { spa?: boolean } = {}) {
   app.setErrorHandler((err, req, reply) => {
     if (err instanceof ZodError) {
       return reply.status(400).send({ error: 'Dados inválidos', issues: err.issues });
@@ -35,6 +35,12 @@ export function registerErrorHandler(app: FastifyInstance) {
   });
 
   app.setNotFoundHandler((req, reply) => {
+    const pathname = req.url.split('?')[0] ?? '/';
+    const isApi = pathname === '/api' || pathname.startsWith('/api/');
+    const isPage =
+      (req.method === 'GET' || req.method === 'HEAD') && !/\.[a-z0-9]+$/i.test(pathname);
+    // Rotas do React Router (/ideias, /saude…) devolvem o index.html; arquivos e /api dão 404 de verdade.
+    if (opts.spa && !isApi && isPage) return reply.sendFile('index.html');
     reply.status(404).send({ error: `Rota ${req.method} ${req.url} não existe` });
   });
 }
