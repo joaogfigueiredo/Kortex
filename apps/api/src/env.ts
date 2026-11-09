@@ -15,6 +15,10 @@ export const AUTO_BACKUP = process.env.KORTEX_AUTO_BACKUP !== '0';
 
 /** Web já compilado (apps/web/dist). Servido pela própria API em produção (`npm start`). */
 export const WEB_DIR = process.env.KORTEX_WEB_DIR ?? path.join(ROOT_DIR, 'apps', 'web', 'dist');
+/** Migrations SQL (apps/api/drizzle). O app desktop empacotado aponta para a cópia que leva junto. */
+export const MIGRATIONS_DIR =
+  process.env.KORTEX_MIGRATIONS_DIR ?? path.join(ROOT_DIR, 'apps', 'api', 'drizzle');
+
 export const SERVE_WEB = process.env.NODE_ENV === 'production';
 
 /**

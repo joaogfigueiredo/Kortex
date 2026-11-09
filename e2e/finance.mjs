@@ -154,6 +154,7 @@ try {
     set.call(el, '2026-12-15');
     el.dispatchEvent(new Event('input', { bubbles: true }));
   });
+  await new Promise((r) => setTimeout(r, 250)); // deixa o React processar o evento da data
   await page.$$eval('dialog[open] button', (bs) =>
     bs.find((b) => b.textContent === 'Adicionar').click(),
   );

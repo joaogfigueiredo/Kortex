@@ -60,12 +60,16 @@ export async function buildApp({
   const serveWeb = !!webDir && fs.existsSync(path.join(webDir, 'index.html'));
   const limiter = createLimiter();
   const app = Fastify({
-    logger: logger && {
-      transport: {
-        target: 'pino-pretty',
-        options: { translateTime: 'HH:MM:ss', ignore: 'pid,hostname' },
-      },
-    },
+    // KORTEX_LOG_PRETTY=0 (app desktop): log em JSON, sem o worker do pino-pretty.
+    logger: logger &&
+      (process.env.KORTEX_LOG_PRETTY === '0'
+        ? true
+        : {
+            transport: {
+              target: 'pino-pretty',
+              options: { translateTime: 'HH:MM:ss', ignore: 'pid,hostname' },
+            },
+          }),
   });
 
   app.decorate('db', db);

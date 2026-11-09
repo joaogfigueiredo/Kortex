@@ -1,0 +1,20 @@
+# Empacota a pasta `stage/` (gerada por build.mjs) num instalador e num .exe portátil.
+appId: br.kortex.app
+productName: Kortex
+directories:
+  app: stage
+  output: release
+  buildResources: assets
+asar: false # o sqlite carrega um .node nativo; sem asar não há o que desempacotar
+npmRebuild: false # better-sqlite3 usa N-API: o mesmo binário serve ao Electron
+win:
+  target: [nsis, portable]
+  icon: assets/icon.png
+nsis:
+  artifactName: Kortex-Instalador-${version}.exe
+  oneClick: true # sem pedir administrador
+  perMachine: false
+  deleteAppDataOnUninstall: false # desinstalar NUNCA apaga seus dados
+electronVersion: 45.2.3
+portable:
+  artifactName: Kortex-Portatil-${version}.exe

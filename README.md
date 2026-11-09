@@ -48,6 +48,17 @@ Nas próximas, o app só é recompilado se o código mudou.
 
 Auditado com axe-core (WCAG 2.2 AA) em todas as páginas, nos dois temas, no desktop e no celular: 0 violações. Funciona só com teclado (Espaço/setas movem cards do Kanban, Enter abre, `N` captura rápida, `F` Modo Foco), com leitor de tela e a partir de 320 px de largura.
 
+## App de Windows (.exe)
+
+Uma janela própria, sem navegador e sem precisar de Node instalado. Funciona **só local** (escuta apenas em `127.0.0.1`, porta 38417) e guarda os dados em `%APPDATA%\Kortex\data` (banco e backups); desinstalar não apaga seus dados.
+
+```
+npm run desktop:dist    # gera apps/desktop/release/
+npm run desktop         # abre o app em modo de teste, sem empacotar
+```
+
+Saem dois arquivos: `Kortex-Instalador-<versão>.exe` (instala sem pedir administrador) e `Kortex-Portatil-<versão>.exe` (um arquivo só, sem instalar). Sem assinatura de código, então o Windows pode mostrar "editor desconhecido" (SmartScreen) na primeira vez: _Mais informações → Executar assim mesmo_. Para usar o celular ou a rede, continue com `npm run start:lan`.
+
 ### Testes de navegador
 
 `npm run test:e2e` roda 16 suítes (Puppeteer + axe-core) contra servidores **isolados** (portas 3399/5199/3398 e banco temporário; nunca toca em `data/kortex.db`). Precisa de Chrome ou Edge (`CHROME_PATH` se estiver em outro lugar). `-- --only=ideas,kbd` roda só algumas; capturas e logs ficam em `e2e/out/`.

@@ -29,7 +29,9 @@
     "start:lan": "node scripts/start.mjs --lan",
     "test:scripts": "node --test scripts/tests",
     "reset-pin": "python scripts/reset_pin.py",
-    "test:e2e": "node e2e/run.mjs"
+    "test:e2e": "node e2e/run.mjs",
+    "desktop": "npm run dev -w @kortex/desktop",
+    "desktop:dist": "npm run dist -w @kortex/desktop"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -46,6 +48,7 @@
     "esbuild@0.18.20": true,
     "esbuild@0.25.12": true,
     "esbuild@0.28.2": true,
-    "better-sqlite3": false
+    "better-sqlite3": false,
+    "electron": true
   }
 }
