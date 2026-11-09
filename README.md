@@ -59,6 +59,10 @@ npm run desktop         # abre o app em modo de teste, sem empacotar
 
 Saem dois arquivos: `Kortex-Instalador-<versão>.exe` (instala sem pedir administrador) e `Kortex-Portatil-<versão>.exe` (um arquivo só, sem instalar). Sem assinatura de código, então o Windows pode mostrar "editor desconhecido" (SmartScreen) na primeira vez: _Mais informações → Executar assim mesmo_. Para usar o celular ou a rede, continue com `npm run start:lan`.
 
+### Trocar o logo
+
+Substitua `docs/brand/kortex-logo.jpg` (quadrado, 1024 px ou mais) e rode `node scripts/gen-icons.mjs`: ele regenera os ícones do PWA, o favicon, o logo da interface e o ícone do `.exe`. Depois, `npm run desktop:dist` para refazer o executável.
+
 ### Testes de navegador
 
 `npm run test:e2e` roda 16 suítes (Puppeteer + axe-core) contra servidores **isolados** (portas 3399/5199/3398 e banco temporário; nunca toca em `data/kortex.db`). Precisa de Chrome ou Edge (`CHROME_PATH` se estiver em outro lugar). `-- --only=ideas,kbd` roda só algumas; capturas e logs ficam em `e2e/out/`.

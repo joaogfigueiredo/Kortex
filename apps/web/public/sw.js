@@ -7,11 +7,11 @@
  * servidor (e ficam protegidos pelo PIN). Sem o servidor, o app abre e avisa
  * que não consegue carregar os dados.
  */
-const CACHE = 'kortex-shell-v1';
+const CACHE = 'kortex-shell-v2';
 const PRECACHE = [
   '/',
   '/manifest.webmanifest',
-  '/favicon.svg',
+  '/icons/favicon-64.png',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
 ];
