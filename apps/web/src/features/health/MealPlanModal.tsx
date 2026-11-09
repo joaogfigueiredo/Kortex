@@ -93,19 +93,17 @@ export function MealPlanModal({ open, onClose }: { open: boolean; onClose: () =>
         {meals.map((m) => (
           <li
             key={m.id}
-            className={clsx(
-              'flex items-center gap-3 rounded-2xl bg-bg px-4 py-3 shadow-neu-sm',
-              !m.active && 'opacity-55',
-            )}
+            className={clsx('flex items-center gap-3 rounded-2xl bg-bg px-4 py-3 shadow-neu-sm')}
           >
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium">
+              <p className={clsx('truncate text-sm font-medium', !m.active && 'text-muted')}>
                 {m.name}
                 {m.time && (
                   <span className="ml-2 text-xs font-normal text-muted tabular-nums">{m.time}</span>
                 )}
               </p>
               <p className="truncate text-xs text-muted">
+                {!m.active && 'Inativa · '}
                 {weekdaysLabel(m.weekdays)}
                 {m.description && ` · ${m.description}`}
               </p>

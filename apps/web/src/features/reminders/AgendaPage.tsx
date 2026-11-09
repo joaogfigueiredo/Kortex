@@ -82,7 +82,7 @@ export function AgendaPage() {
               }
               className={clsx(
                 'inline-flex shrink-0 items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium shadow-neu-sm transition-all',
-                off && 'opacity-45 shadow-neu-inset-sm',
+                off && 'text-muted shadow-neu-inset-sm',
               )}
             >
               <span
@@ -101,7 +101,7 @@ export function AgendaPage() {
         </Card>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <Card className="p-4 sm:p-6">
           <MonthCalendar
             year={view.year}

@@ -74,6 +74,11 @@ export function BarChart({
       <div className="relative" aria-hidden onMouseLeave={() => setHover(null)}>
         {/* linha de referência no topo da escala (recessiva) */}
         <div className="pointer-events-none absolute inset-x-0 top-0 border-t border-dashed border-line" />
+        {totals.every((t) => t === 0) && (
+          <span className="absolute inset-x-0 top-1/3 text-center text-xs text-muted">
+            Sem registros no período
+          </span>
+        )}
         <div
           className={clsx('flex items-end border-b border-line', dense ? 'gap-[3px]' : 'gap-2')}
           style={{ height }}
@@ -85,11 +90,8 @@ export function BarChart({
             return (
               <div
                 key={d.date}
-                tabIndex={0}
                 onMouseEnter={() => setHover(i)}
-                onFocus={() => setHover(i)}
-                onBlur={() => setHover(null)}
-                className="relative flex h-full min-w-0 flex-1 items-end justify-center rounded-md outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="relative flex h-full min-w-0 flex-1 items-end justify-center rounded-md"
               >
                 <div
                   className={clsx(

@@ -54,9 +54,9 @@ export function MiniAgenda() {
         <div className="space-y-4">
           {days.map((d) => (
             <section key={d.date} aria-label={relativeDayLabel(d.date, today)}>
-              <h4 className="mb-2 px-1 text-[11px] font-semibold tracking-wider text-muted uppercase">
+              <h3 className="mb-2 px-1 text-[11px] font-semibold tracking-wider text-muted uppercase">
                 {relativeDayLabel(d.date, today)}
-              </h4>
+              </h3>
               {d.items.length ? (
                 <ul className="space-y-2">
                   {d.items.slice(0, MAX_PER_DAY).map((o) => (

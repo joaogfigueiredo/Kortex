@@ -20,3 +20,6 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 .idea/
+
+# Capturas e logs dos testes de navegador
+e2e/out/

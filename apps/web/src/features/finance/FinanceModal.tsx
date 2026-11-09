@@ -164,7 +164,9 @@ export function FinanceModal({
           ]}
         />
       )}
-      <div className={clsx('grid gap-6', editing && 'md:grid-cols-[1fr_minmax(0,24rem)]')}>
+      <div
+        className={clsx('grid grid-cols-1 gap-6', editing && 'md:grid-cols-[1fr_minmax(0,24rem)]')}
+      >
         <form
           id="finance-form"
           onSubmit={submit}
@@ -178,7 +180,9 @@ export function FinanceModal({
             error={errors.title}
             maxLength={200}
           />
-          <div className={clsx('grid gap-5 sm:grid-cols-2', editing && 'md:grid-cols-1')}>
+          <div
+            className={clsx('grid grid-cols-1 gap-5 sm:grid-cols-2', editing && 'md:grid-cols-1')}
+          >
             <Select
               label="Tipo"
               value={kind}
@@ -202,7 +206,7 @@ export function FinanceModal({
               ))}
             </Select>
           </div>
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <MoneyField
               label="Esperada / mês"
               value={expected}

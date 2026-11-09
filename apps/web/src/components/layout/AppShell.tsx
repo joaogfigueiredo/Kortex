@@ -1,8 +1,9 @@
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router';
 import clsx from 'clsx';
 import { LayoutGrid, Timer } from 'lucide-react';
 import { NAV } from '../../app/nav';
+import { ErrorBoundary } from '../ErrorBoundary';
 import { IconButton, Modal, Toaster } from '../ui';
 import { QuickCapture } from '../../features/capture/QuickCapture';
 import { FocusOverlay } from '../../features/focus/FocusOverlay';
@@ -22,9 +23,41 @@ export function AppShell() {
   const primary = NAV.filter((n) => n.mobilePrimary);
   const secondary = NAV.filter((n) => !n.mobilePrimary);
   const secondaryActive = secondary.some((n) => isActive(n.to, pathname));
+  const mainRef = useRef<HTMLElement>(null);
+
+  // Título da aba por página (leitores de tela anunciam; o histórico do navegador fica legível).
+  useEffect(() => {
+    const title = current
+      ? current.to === '/'
+        ? 'Kortex'
+        : `${current.label} · Kortex`
+      : 'Página não encontrada · Kortex';
+    document.documentElement.dataset.pageTitle = title; // o Modo Foco restaura este título ao terminar
+    if (!useFocus.getState().session) document.title = title;
+  }, [current]);
+
+  // Ao trocar de página, leva o foco para o conteúdo (teclado e leitores de tela não ficam "para trás" no menu).
+  // Compara com o caminho anterior (e não com "primeira renderização"): seguro com o StrictMode do React.
+  const lastPath = useRef(pathname);
+  useEffect(() => {
+    if (lastPath.current === pathname) return;
+    lastPath.current = pathname;
+    mainRef.current?.focus({ preventScroll: true });
+  }, [pathname]);
 
   return (
     <div className="min-h-dvh">
+      <a
+        href="#conteudo"
+        onClick={(e) => {
+          e.preventDefault();
+          mainRef.current?.focus();
+        }}
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[70] focus:rounded-2xl focus:bg-accent focus:px-4 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-on-accent focus:shadow-glow"
+      >
+        Pular para o conteúdo
+      </a>
+
       {/* ---------- Sidebar (desktop) ---------- */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-68 flex-col p-5 md:flex">
         <div className="flex h-full flex-col rounded-3xl bg-bg p-4 shadow-neu">
@@ -84,12 +117,19 @@ export function AppShell() {
       </header>
 
       {/* ---------- Conteúdo ---------- */}
-      <main className="px-4 pt-2 pb-32 md:pt-8 md:pr-8 md:pb-10 md:pl-76">
+      <main
+        id="conteudo"
+        ref={mainRef}
+        tabIndex={-1}
+        className="px-4 pt-2 pb-32 outline-none md:pt-8 md:pr-8 md:pb-10 md:pl-76"
+      >
         <div className="mx-auto max-w-6xl">
           {/* Módulos são carregados sob demanda; o menu continua visível. */}
-          <Suspense fallback={<PageFallback />}>
-            <Outlet />
-          </Suspense>
+          <ErrorBoundary resetKey={pathname}>
+            <Suspense fallback={<PageFallback />}>
+              <Outlet />
+            </Suspense>
+          </ErrorBoundary>
         </div>
       </main>
 

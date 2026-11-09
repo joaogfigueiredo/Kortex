@@ -91,7 +91,7 @@ export function DashboardPage() {
         </Card>
       )}
       {isLoading || !data ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {Array.from({ length: 5 }, (_, i) => (
             <div key={i} className="h-28 animate-pulse rounded-3xl shadow-neu-inset" />
           ))}
@@ -166,7 +166,12 @@ function Content({ data }: { data: DashboardData }) {
             Nenhum tempo registrado no período. Use o Modo Foco ou registre sessões de estudo.
           </Empty>
         ) : (
-          <div className={clsx('grid gap-8', multiDay && 'lg:grid-cols-[minmax(0,1fr)_16rem]')}>
+          <div
+            className={clsx(
+              'grid grid-cols-1 gap-8',
+              multiDay && 'lg:grid-cols-[minmax(0,1fr)_16rem]',
+            )}
+          >
             {multiDay && (
               <BarChart
                 title="Tempo por área e por dia"
@@ -185,7 +190,7 @@ function Content({ data }: { data: DashboardData }) {
       </Card>
 
       {/* Estudo + Projetos */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader
             icon={<BookOpen className="size-5" />}
@@ -252,7 +257,7 @@ function Content({ data }: { data: DashboardData }) {
 
       {/* Hábitos por dia (pequenos múltiplos, uma escala cada) */}
       {multiDay && (
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <Card>
             <CardHeader
               icon={<Dumbbell className="size-5" />}
@@ -307,7 +312,7 @@ function Content({ data }: { data: DashboardData }) {
       )}
 
       {/* Constância + frequência de trabalho + sequências */}
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
         {multiDay && (
           <Card>
             <CardHeader
@@ -325,7 +330,7 @@ function Content({ data }: { data: DashboardData }) {
             />
           </Card>
         )}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
           <Mini
             icon={<Briefcase className="size-4" />}
             label="Frequência de trabalho"
@@ -354,7 +359,7 @@ function Content({ data }: { data: DashboardData }) {
       </div>
 
       {/* Ideias e finanças */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader
             icon={<Lightbulb className="size-5" />}

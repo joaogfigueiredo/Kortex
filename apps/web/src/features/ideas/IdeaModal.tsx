@@ -135,7 +135,7 @@ export function IdeaModal({ state, onClose }: { state: IdeaModalState; onClose: 
           onChange={(e) => setDescription(e.target.value)}
           rows={5}
         />
-        <div className="grid gap-5 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <Select
             label="Status"
             value={status}

@@ -44,6 +44,14 @@ Nas próximas, o app só é recompilado se o código mudou.
 - Por padrão o servidor escuta só em `127.0.0.1` (este computador). A rede só é aberta com `start:lan`, e o terminal avisa se estiver aberto **sem PIN**.
 - Esqueceu o PIN? Rode `npm run reset-pin`: ele remove só o PIN e as sessões (seus dados continuam intactos) e você cria outro em _Configurações → Segurança_.
 
+## Acessibilidade
+
+Auditado com axe-core (WCAG 2.2 AA) em todas as páginas, nos dois temas, no desktop e no celular: 0 violações. Funciona só com teclado (Espaço/setas movem cards do Kanban, Enter abre, `N` captura rápida, `F` Modo Foco), com leitor de tela e a partir de 320 px de largura.
+
+### Testes de navegador
+
+`npm run test:e2e` roda 16 suítes (Puppeteer + axe-core) contra servidores **isolados** (portas 3399/5199/3398 e banco temporário; nunca toca em `data/kortex.db`). Precisa de Chrome ou Edge (`CHROME_PATH` se estiver em outro lugar). `-- --only=ideas,kbd` roda só algumas; capturas e logs ficam em `e2e/out/`.
+
 ## Scripts
 
 | Comando                        | O que faz                                                        |

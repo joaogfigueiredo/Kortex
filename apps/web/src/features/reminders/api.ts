@@ -86,5 +86,18 @@ export function useReminderMutations() {
     onError,
   });
 
-  return { create, update, remove, toggle, createCategory };
+  const updateCategory = useMutation({
+    mutationFn: ({ id, ...body }: { id: number; name?: string; color?: string }) =>
+      api.patch<ReminderCategory>(`/reminders/categories/${id}`, body),
+    onSuccess: () => invalidate(),
+    onError,
+  });
+
+  const removeCategory = useMutation({
+    mutationFn: (id: number) => api.delete<void>(`/reminders/categories/${id}`),
+    onSuccess: () => invalidate(),
+    onError,
+  });
+
+  return { create, update, remove, toggle, createCategory, updateCategory, removeCategory };
 }

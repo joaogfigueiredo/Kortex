@@ -5,7 +5,7 @@ import prettier from 'eslint-config-prettier';
 const ro = (names) => Object.fromEntries(names.map((n) => [n, 'readonly']));
 
 export default tseslint.config(
-  { ignores: ['**/dist/**', '**/node_modules/**', 'apps/api/drizzle/**', 'data/**'] },
+  { ignores: ['**/dist/**', '**/node_modules/**', 'apps/api/drizzle/**', 'data/**', 'e2e/**'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   prettier,

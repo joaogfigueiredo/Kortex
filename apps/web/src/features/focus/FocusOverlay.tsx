@@ -74,7 +74,7 @@ export function FocusOverlay() {
   // Título da aba mostra o tempo.
   useEffect(() => {
     if (!session) return;
-    const base = 'Kortex';
+    const base = document.documentElement.dataset.pageTitle ?? 'Kortex';
     const shown =
       session.mode === 'timer'
         ? session.targetSec - elapsedMs(session, now) / 1000

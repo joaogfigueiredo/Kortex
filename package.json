@@ -28,14 +28,17 @@
     "test:py": "python -m unittest discover -s scripts/tests",
     "start:lan": "node scripts/start.mjs --lan",
     "test:scripts": "node --test scripts/tests",
-    "reset-pin": "python scripts/reset_pin.py"
+    "reset-pin": "python scripts/reset_pin.py",
+    "test:e2e": "node e2e/run.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "axe-core": "^4.14.0",
     "concurrently": "^10.0.7",
     "eslint": "^10.14.0",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.9.10",
+    "puppeteer-core": "^25.16.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.72.1"
   },

@@ -60,15 +60,9 @@ export function SubjectCard({
     <article
       className={clsx(
         'group flex flex-col rounded-3xl bg-bg p-5 shadow-neu transition-all duration-200 hover:-translate-y-0.5',
-        s.archived && 'opacity-60',
       )}
     >
-      <button
-        type="button"
-        onClick={onOpen}
-        className="flex-1 text-left"
-        aria-label={`Abrir ${s.name}`}
-      >
+      <button type="button" onClick={onOpen} className="flex-1 text-left">
         <div className="flex items-start gap-3">
           <span
             aria-hidden
@@ -76,7 +70,7 @@ export function SubjectCard({
             style={{ background: s.color, boxShadow: `0 0 10px ${s.color}` }}
           />
           <div className="min-w-0 flex-1">
-            <h3 className="truncate text-base font-semibold">{s.name}</h3>
+            <h2 className="truncate text-base font-semibold">{s.name}</h2>
             <p className="text-xs text-muted">{STUDY_LEVEL_LABEL[s.level]}</p>
           </div>
         </div>

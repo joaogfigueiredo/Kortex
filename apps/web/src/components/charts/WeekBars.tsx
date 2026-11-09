@@ -28,14 +28,18 @@ export function WeekBars({
   return (
     <figure aria-label={title}>
       <div className="relative flex h-32 items-end gap-2 border-b border-line pb-px" aria-hidden>
+        {days.every((d) => d.value === 0) && (
+          <span className="absolute inset-x-0 top-1/3 text-center text-xs text-muted">
+            Sem registros nestes 7 dias
+          </span>
+        )}
         {days.map((d) => {
           const isToday = d.date === today;
           const pct = d.value ? Math.max(6, Math.round((d.value / max) * 100)) : 0;
           return (
             <div
               key={d.date}
-              tabIndex={0}
-              className="group relative flex h-full flex-1 cursor-default items-end justify-center rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              className="group relative flex h-full flex-1 cursor-default items-end justify-center rounded-lg"
             >
               {/* rótulo direto só em hoje (seletivo) */}
               {isToday && d.value > 0 && (
@@ -58,7 +62,7 @@ export function WeekBars({
                 }}
               />
               {/* tooltip */}
-              <span className="pointer-events-none absolute bottom-full z-10 mb-1 hidden rounded-xl bg-surface px-2.5 py-1.5 text-[11px] whitespace-nowrap shadow-neu-sm group-hover:block group-focus-visible:block">
+              <span className="pointer-events-none absolute bottom-full z-10 mb-1 hidden rounded-xl bg-surface px-2.5 py-1.5 text-[11px] whitespace-nowrap shadow-neu-sm group-hover:block ">
                 <span className="block text-muted first-letter:uppercase">{fmtDay(d.date)}</span>
                 <span className="font-semibold tabular-nums">{format(d.value)}</span>
               </span>

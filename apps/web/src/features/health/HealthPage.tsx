@@ -32,7 +32,7 @@ export function HealthPage() {
       {summary && (
         <section
           aria-label="Resumo dos últimos 7 dias"
-          className="mb-8 grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]"
+          className="mb-8 grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]"
         >
           <div className="grid grid-cols-3 gap-4 lg:grid-cols-1">
             <Stat
@@ -114,7 +114,7 @@ export function HealthPage() {
         </Card>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <MealsCard day={day} onEditPlan={() => setPlanOpen(true)} />
         <WorkoutsCard day={day} />
       </div>
@@ -149,7 +149,6 @@ function DietStrip({
             type="button"
             onClick={() => onSelect(d.date)}
             aria-pressed={selected === d.date}
-            aria-label={`${longDayLabel(d.date)}: ${d.dietPct == null ? 'sem plano' : c ? `${d.dietPct}% da dieta` : 'sem registro'}`}
             className={clsx(
               'flex flex-1 flex-col items-center gap-1 rounded-xl py-2 transition-all',
               selected === d.date ? 'shadow-neu-inset-sm' : 'hover:shadow-neu-sm',
@@ -160,12 +159,21 @@ function DietStrip({
                 : undefined
             }
           >
+            {/* Nome acessível = texto completo; o visual abreviado fica oculto para leitores de tela. */}
+            <span className="sr-only">
+              {`${longDayLabel(d.date)}: ${d.dietPct == null ? 'sem plano' : c ? `${d.dietPct}% da dieta` : 'sem registro'}`}
+            </span>
             <span
+              aria-hidden
               className={clsx('size-2 rounded-full', !c && 'bg-line')}
               style={c ? { background: c, boxShadow: `0 0 6px ${c}` } : undefined}
             />
-            <span className="text-xs font-semibold tabular-nums">{c ? `${d.dietPct}%` : '—'}</span>
-            <span className="text-[10px] text-muted">{WEEKDAY_SHORT[wd]}</span>
+            <span aria-hidden className="text-xs font-semibold tabular-nums">
+              {c ? `${d.dietPct}%` : '—'}
+            </span>
+            <span aria-hidden className="text-[10px] text-muted">
+              {WEEKDAY_SHORT[wd]}
+            </span>
           </button>
         );
       })}

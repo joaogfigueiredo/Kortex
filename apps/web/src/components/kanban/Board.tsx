@@ -187,7 +187,19 @@ export function Board<T extends { id: number }>({
       accessibility={{
         screenReaderInstructions: {
           draggable:
-            'Pressione Espaço para pegar o card. Use as setas para mover e Espaço para soltar. Esc cancela.',
+            'Pressione Espaço para pegar o card. Use as setas para mover e Espaço para soltar. Esc cancela. Enter abre os detalhes.',
+        },
+        // dnd-kit fala inglês por padrão; aqui os anúncios dos leitores de tela ficam em português.
+        announcements: {
+          onDragStart: () => 'Card pego.',
+          onDragOver: ({ over }) => {
+            if (!over) return undefined;
+            const col = columns.find((c) => c.id === findColumn(over.id));
+            return col ? `Sobre a coluna ${col.title}.` : undefined;
+          },
+          onDragEnd: ({ over }) =>
+            over ? 'Card solto.' : 'Card solto fora de uma coluna; nada mudou.',
+          onDragCancel: () => 'Movimento cancelado.',
         },
       }}
     >
@@ -475,6 +487,11 @@ function SortableCard({
       style={{ transform: CSS.Transform.toString(transform), transition }}
       {...attributes}
       {...listeners}
+      // O card contém links e botões; um "button" com controles dentro é inválido (WAI-ARIA).
+      // "group" mantém o foco por teclado e o item continua arrastável/abrível.
+      role="group"
+      aria-pressed={undefined}
+      aria-roledescription="card arrastável"
       onClick={onOpen}
       onKeyDown={(e) => {
         listeners?.onKeyDown?.(e);

@@ -169,7 +169,7 @@ function TimelineItem({
         className={clsx(
           'min-w-0 flex-1 rounded-2xl px-4 py-3',
           editable ? 'shadow-neu-sm' : 'shadow-neu-inset-sm',
-          isAlert && entry.resolved && 'opacity-60',
+          isAlert && entry.resolved && 'opacity-70',
         )}
       >
         <div className="flex items-center gap-2 text-[11px] text-muted">

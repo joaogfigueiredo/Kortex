@@ -73,17 +73,19 @@ export function GoalsModal({ open, onClose }: { open: boolean; onClose: () => vo
           return (
             <li
               key={g.id}
-              className={clsx(
-                'flex items-center gap-3 rounded-2xl bg-bg px-4 py-3 shadow-neu-sm',
-                !g.active && 'opacity-55',
-              )}
+              className={clsx('flex items-center gap-3 rounded-2xl bg-bg px-4 py-3 shadow-neu-sm')}
             >
               <span className="grid size-8 shrink-0 place-items-center rounded-full text-accent-ink shadow-neu-inset-sm">
                 <Icon className="size-4" />
               </span>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">{g.title}</p>
-                <p className="truncate text-xs text-muted">{weekdaysLabel(g.weekdays)}</p>
+                <p className={clsx('truncate text-sm font-medium', !g.active && 'text-muted')}>
+                  {g.title}
+                </p>
+                <p className="truncate text-xs text-muted">
+                  {!g.active && 'Inativa · '}
+                  {weekdaysLabel(g.weekdays)}
+                </p>
               </div>
               <Toggle
                 checked={g.active}

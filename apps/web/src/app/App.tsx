@@ -1,6 +1,7 @@
 import { lazy, useEffect, type ReactNode } from 'react';
 import { BrowserRouter, Link, Route, Routes } from 'react-router';
 import { AppShell } from '../components/layout/AppShell';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 import { Logo } from '../components/layout/Logo';
 import { Card } from '../components/ui';
 import { LockScreen } from '../features/auth/LockScreen';
@@ -72,23 +73,25 @@ function AuthGate({ children }: { children: ReactNode }) {
 
 export function App() {
   return (
-    <AuthGate>
-      <BrowserRouter>
-        <Routes>
-          <Route element={<AppShell />}>
-            <Route index element={<HomePage />} />
-            <Route path="ideias" element={<IdeasPage />} />
-            <Route path="projetos" element={<ProjectsPage />} />
-            <Route path="financas" element={<FinancePage />} />
-            <Route path="lembretes" element={<AgendaPage />} />
-            <Route path="estudos" element={<StudiesPage />} />
-            <Route path="saude" element={<HealthPage />} />
-            <Route path="dashboard" element={<DashboardPage />} />
-            <Route path="configuracoes" element={<SettingsPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </AuthGate>
+    <ErrorBoundary fullscreen>
+      <AuthGate>
+        <BrowserRouter>
+          <Routes>
+            <Route element={<AppShell />}>
+              <Route index element={<HomePage />} />
+              <Route path="ideias" element={<IdeasPage />} />
+              <Route path="projetos" element={<ProjectsPage />} />
+              <Route path="financas" element={<FinancePage />} />
+              <Route path="lembretes" element={<AgendaPage />} />
+              <Route path="estudos" element={<StudiesPage />} />
+              <Route path="saude" element={<HealthPage />} />
+              <Route path="dashboard" element={<DashboardPage />} />
+              <Route path="configuracoes" element={<SettingsPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </AuthGate>
+    </ErrorBoundary>
   );
 }

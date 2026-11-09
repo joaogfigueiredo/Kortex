@@ -148,7 +148,9 @@ export function SubjectModal({
         </div>
       }
     >
-      <div className={clsx('grid gap-6', editing && 'md:grid-cols-[1fr_minmax(0,18rem)]')}>
+      <div
+        className={clsx('grid grid-cols-1 gap-6', editing && 'md:grid-cols-[1fr_minmax(0,18rem)]')}
+      >
         <form id="subject-form" onSubmit={submit} className="space-y-5">
           <Input
             label="Nome"

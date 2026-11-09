@@ -43,7 +43,7 @@ export function CardHeader({
         </span>
       )}
       <div className="min-w-0 flex-1">
-        <h3 className="truncate text-base font-semibold">{title}</h3>
+        <h2 className="truncate text-base font-semibold">{title}</h2>
         {subtitle && <p className="mt-0.5 text-sm text-muted">{subtitle}</p>}
       </div>
       {action}

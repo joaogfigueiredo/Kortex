@@ -63,7 +63,7 @@ export function StudiesPage() {
       {subjects.length > 0 && summary && (
         <section
           aria-label="Resumo"
-          className="mb-8 grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]"
+          className="mb-8 grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]"
         >
           <div className="grid grid-cols-3 gap-4 lg:grid-cols-1 lg:grid-rows-3">
             <Stat
@@ -138,7 +138,7 @@ export function StudiesPage() {
           </Button>
         </Card>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
           {shown.map((s) => (
             <SubjectCard
               key={s.id}

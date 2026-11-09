@@ -109,7 +109,7 @@ export function MonthCalendar({
                 className={clsx(
                   'relative flex aspect-square flex-col items-center justify-start rounded-xl pt-1.5 text-sm transition-all duration-200 sm:aspect-[1.15] sm:rounded-2xl sm:pt-2.5',
                   isSelected ? 'shadow-neu-inset-sm' : 'hover:shadow-neu-sm',
-                  !inMonth && 'opacity-35',
+                  !inMonth && 'text-muted',
                 )}
                 style={
                   isSelected

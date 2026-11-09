@@ -93,5 +93,7 @@ Todo passo termina com o app rodando, uma checagem manual no navegador (desktop 
 
 ## Passo 14: Polimento
 
-- [ ] Acessibilidade, animações sutis, estados vazios
-- [ ] Testes Vitest: recorrência, agregações, export
+- [x] Acessibilidade: auditoria axe-core (0 violações em 79 varreduras), link "Pular para o conteúdo", títulos por página, foco ao navegar, anúncios do Kanban em português, reflow a 320 px
+- [x] Tela de categorias da Agenda (nome e cor) e remoção do cartão de demonstração das Configurações
+- [x] Estados vazios revisados (banco novo) e tela de recuperação de erros (`ErrorBoundary`)
+- [x] Testes: recorrência, agregações, export, segurança e navegador (E2E) — ver `npm test`

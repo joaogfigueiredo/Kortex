@@ -134,7 +134,11 @@ export function ProjectModal({
         </div>
       }
     >
-      <form id="project-form" onSubmit={submit} className="grid gap-6 md:grid-cols-[1fr_15rem]">
+      <form
+        id="project-form"
+        onSubmit={submit}
+        className="grid grid-cols-1 gap-6 md:grid-cols-[1fr_15rem]"
+      >
         <div className="space-y-5">
           <Input
             label="Nome"
@@ -179,7 +183,7 @@ export function ProjectModal({
                 </option>
               ))}
           </Select>
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <Input
               label="Repositório"
               placeholder="github.com/voce/projeto"

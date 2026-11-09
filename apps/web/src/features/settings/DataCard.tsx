@@ -116,10 +116,10 @@ export function DataCard() {
       <div className="space-y-6">
         {/* Exportar */}
         <section aria-label="Exportar">
-          <h4 className="mb-3 text-xs font-semibold tracking-wider text-muted uppercase">
+          <h3 className="mb-3 text-xs font-semibold tracking-wider text-muted uppercase">
             Exportar tudo
-          </h4>
-          <div className="grid gap-3 sm:grid-cols-2">
+          </h3>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <a
               href="/api/export?format=json"
               download
@@ -148,9 +148,9 @@ export function DataCard() {
         {/* Backups .db */}
         <section aria-label="Backups">
           <div className="mb-3 flex items-center gap-3">
-            <h4 className="flex-1 text-xs font-semibold tracking-wider text-muted uppercase">
+            <h3 className="flex-1 text-xs font-semibold tracking-wider text-muted uppercase">
               Backups do banco
-            </h4>
+            </h3>
             <Button
               size="sm"
               variant="primary"
@@ -218,9 +218,9 @@ export function DataCard() {
 
         {/* Restaurar */}
         <section aria-label="Restaurar">
-          <h4 className="mb-3 text-xs font-semibold tracking-wider text-muted uppercase">
+          <h3 className="mb-3 text-xs font-semibold tracking-wider text-muted uppercase">
             Restaurar
-          </h4>
+          </h3>
           <input
             ref={fileRef}
             type="file"
